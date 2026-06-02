@@ -123,3 +123,4 @@ ServiceFabricBackup/
 *.tmp
 *.swp
 *.orig
+*.dbmdl
