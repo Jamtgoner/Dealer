@@ -2,7 +2,7 @@
     [Id]             INT             IDENTITY (1, 1) NOT NULL,
     [Marca]          VARCHAR (50)    NOT NULL,
     [Modelo]         VARCHAR (100)   NOT NULL,
-    [Año]            INT             NOT NULL,
+    [Anio]           INT             NOT NULL,
     [Color]          VARCHAR (50)    NOT NULL,
     [Vin]            VARCHAR (50)    NOT NULL,
     [Placa]          VARCHAR (50)    NOT NULL,
@@ -17,6 +17,7 @@
     [CompradoA]      VARCHAR (50)    NOT NULL,
     [MargenGanancia] FLOAT (53)      NOT NULL,
     [Descripcion]    VARCHAR (500)   NULL,
+    [IsDeleted]      BIT             CONSTRAINT [DF_Vehiculos_IsDeleted] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Vehiculos] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

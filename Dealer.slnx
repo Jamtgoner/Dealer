@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="Dealer.csproj" />
-  <Project Path="DealerDatabase/DealerDatabase.sqlproj">
+  <Project Path="DealerDatabase/DealerDatabase.sqlproj" Id="faca7a34-bbbb-4d00-9f38-9bf00d97da13">
     <Build />
     <Deploy />
   </Project>

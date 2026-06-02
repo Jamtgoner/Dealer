@@ -1,0 +1,22 @@
+﻿
+CREATE view [dbo].[vVehiculos] as
+SELECT [Id]
+      ,[Marca]
+      ,[Modelo]
+      ,[Anio]
+      ,[Color]
+      ,[Vin]
+      ,[Placa]
+      ,[Millaje]
+      ,[Llaves]
+      ,[Combustible]
+      ,[Transmision]
+      ,[Estado]
+      ,[Ubicacion]
+      ,[FechaCompra]
+      ,[PrecioCompra]
+      ,[CompradoA]
+      ,[MargenGanancia]
+      ,[Descripcion]
+  FROM [Vehiculos]
+  where IsDeleted = 0
