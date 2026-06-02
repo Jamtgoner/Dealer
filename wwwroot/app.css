@@ -1,3 +1,10 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fff !important;
+}
+
 h1:focus {
     outline: none;
 }
@@ -36,3 +43,66 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.bg-topbar {
+    background-color: #284580 !important;
+}
+
+.bg-sidebar {
+    background: linear-gradient(240deg, #131d34 0%, #284580 50%, #2b50a2 100%) !important;
+}
+
+.bg-suave {
+    background-color: #F7F9FA !important;
+}
+
+/* Clase para el contenedor del menú */
+.nav-custom-white .mud-nav-link-icon {
+    font-size: 1.75rem !important;
+    color: rgba(255, 255, 255, 0.70) !important; /* Blanco con un poco de transparencia para el estado normal */
+    transition: color 0.3s ease;
+}
+
+/* Cuando el mouse pasa por encima (Hover) */
+.nav-custom-white .mud-nav-link:hover .mud-nav-link-icon {
+    color: #ffffff !important;
+}
+
+/* Cuando el link está activo (la página actual) */
+.nav-custom-white .mud-nav-link.active .mud-nav-link-icon {
+    color: #ffffff !important;
+}
+
+/* Opcional: Color del texto también en blanco */
+.nav-custom-white .mud-nav-link-text {
+    color: #ffffff !important;
+}
+
+#blazor-error-ui {
+    background-color: #b91c1c !important; /* Rojo oscuro */
+    color: white !important;
+    padding: 15px !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 10000 !important;
+    display: none; /* Blazor lo mostrará automáticamente */
+    text-align: center !important;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2) !important;
+    font-family: sans-serif !important;
+}
+
+    /* El link de reload para que se vea claro */
+    #blazor-error-ui .reload {
+        color: #fef08a !important; /* Amarillo claro */
+        font-weight: bold !important;
+        margin: 0 10px !important;
+    }
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer !important;
+        position: absolute !important;
+        right: 15px !important;
+        top: 15px !important;
+    }
