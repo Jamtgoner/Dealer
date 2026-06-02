@@ -1,0 +1,125 @@
+## ─────────────────────────────────────────
+##  .gitignore — Blazor Web App (.NET)
+## ─────────────────────────────────────────
+
+# ── Build & compilación ──────────────────
+[Bb]in/
+[Oo]bj/
+out/
+publish/
+artifacts/
+
+# ── Visual Studio ────────────────────────
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+*.pidb
+*.svclog
+*.scc
+
+# ── Rider / JetBrains ────────────────────
+.idea/
+*.sln.iml
+
+# ── VS Code ──────────────────────────────
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# ── .NET / NuGet ─────────────────────────
+*.nupkg
+*.snupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+project.lock.json
+project.assets.json
+project.fragment.lock.json
+artifacts/
+.nuget/
+nuget.config.user
+*.nuspec
+
+# ── Blazor WASM / Web assets ─────────────
+wwwroot/_framework/
+wwwroot/service-worker-assets.js
+**/wwwroot/css/bootstrap/
+
+# ── Entity Framework / Migraciones ───────
+# Descomenta si NO quieres versionar migraciones:
+# **/Migrations/
+
+# ── Secretos y configuración local ───────
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+**/*.pfx
+**/*.p12
+**/*.key
+**/*.pem
+.env
+.env.*
+!.env.example
+
+# ── Logs ─────────────────────────────────
+*.log
+logs/
+LogFiles/
+
+# ── Archivos temporales del SO ───────────
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# ── Test / Coverage ───────────────────────
+TestResults/
+coverage/
+*.trx
+*.coveragexml
+*.coverage
+**/.playwright/
+
+# ── Node / npm (si usas JS tooling) ──────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+dist/
+.cache/
+
+# ── Docker ───────────────────────────────
+docker-compose.override.yml
+.dockerignore.local
+
+# ── Azure / Deployment ───────────────────
+.azure/
+*.pubxml
+*.pubxml.user
+PublishProfiles/
+ServiceFabricBackup/
+
+# ── Otros ────────────────────────────────
+*.bak
+*.tmp
+*.swp
+*.orig
