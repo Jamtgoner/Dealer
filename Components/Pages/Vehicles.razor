@@ -1,5 +1,6 @@
 ﻿@page "/vehiculos"
 @inject IRepGeneral dataconex
+@inject IDialogService DialogService
 
 <PageTitle>Vehiculos</PageTitle>
 
@@ -216,6 +217,35 @@
 
     private async Task NuevoVehiculo()
     {
+        var parametros = new DialogParameters<VehiculoDialog> { { x => x.VehiculoParam, new Vehiculos() } };
+        var opciones = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Large,
+            BackdropClick = false,
+            FullWidth = true
+        };
 
+        var dialog = await DialogService.ShowAsync<VehiculoDialog>("Agregar Vehículo", parametros, opciones);
+        var resultado = await dialog.Result;
+
+        if (!resultado.Canceled)
+        {
+            // Refrescas tu lista _fullVehiculos ejecutando el OnInitializedAsync()
+        }
+    }
+
+    private async Task AbrirModalEditar(Vehiculos vehiculoSeleccionado)
+    {
+        var parametros = new DialogParameters<VehiculoDialog> { { x => x.VehiculoParam, vehiculoSeleccionado } };
+        var opciones = new DialogOptions { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true, CloseButton = true };
+
+        var dialog = await DialogService.ShowAsync<VehiculoDialog>("Editar Vehículo", parametros, opciones);
+        var resultado = await dialog.Result;
+
+        if (!resultado.Canceled)
+        {
+            // Refrescas tu lista principal de la base de datos
+        }
     }
 }

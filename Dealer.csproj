@@ -18,6 +18,7 @@
   <ItemGroup>
     <Folder Include="Models\DTOs\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\documentosVehiculos\" />
     <Folder Include="wwwroot\vehiculos\" />
   </ItemGroup>
 

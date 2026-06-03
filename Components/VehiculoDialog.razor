@@ -1,0 +1,440 @@
+﻿@inject IRepGeneral dataconex
+@inject ISnackbar Snackbar
+@inject IWebHostEnvironment WebHostEnvironment
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" Class="font-weight-bold">
+            @(VehiculoParam?.Id == 0 ? "Agregar Vehículo" : "Editar Vehículo")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="_formIsValid">
+            <MudGrid Spacing="4">
+                <!-- Fila 1: Marca, Modelo, Año, Color -->
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Marca" Label="Marca *" Required="true" RequiredError="La marca es requerida" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Modelo" Label="Modelo *" Required="true" RequiredError="El modelo es requerido" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudNumericField @bind-Value="_vehiculo.Anio" Label="Año *" Required="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Fila 2: VIN, Placa, Millaje, Llaves -->
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Vin" Label="VIN" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Placa" Label="Número de Placa" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudNumericField @bind-Value="_vehiculo.Millaje" Label="Millaje" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudNumericField @bind-Value="_vehiculo.Llaves" Label="Cant. de Llaves" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Fila 3: Combustible, Transmisión, Estado, Ubicación -->
+                <MudItem xs="12" sm="3">
+                    <MudSelect @bind-Value="_vehiculo.Combustible" Label="Tipo de Combustible" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelectItem Value="@("Gasolina")">Gasolina</MudSelectItem>
+                        <MudSelectItem Value="@("Gasoil / Diésel")">Gasoil / Diésel</MudSelectItem>
+                        <MudSelectItem Value="@("Híbrido")">Híbrido</MudSelectItem>
+                        <MudSelectItem Value="@("Eléctrico")">Eléctrico</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudSelect @bind-Value="_vehiculo.Transmision" Label="Transmisión" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelectItem Value="@("Automática")">Automática</MudSelectItem>
+                        <MudSelectItem Value="@("Mecánica")">Mecánica</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudSelect @bind-Value="_vehiculo.Estado" Label="Estado" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelectItem Value="@("Disponible")">Disponible</MudSelectItem>
+                        <MudSelectItem Value="@("En Reparación")">En Reparación</MudSelectItem>
+                        <MudSelectItem Value="@("Vendido")">Vendido</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.Ubicacion" Label="Ubicación" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudText Typo="Typo.caption" Class="font-weight-bold text-muted text-uppercase">Precio de Compra</MudText>
+                </MudItem>
+
+                <!-- Fila 4: Fecha Compra, Precio Compra, Comprado A, Margen Ganancia -->
+                <MudItem xs="12" sm="3">
+                    <MudDatePicker @bind-Date="_fechaCompraNullable" Label="Fecha de Compra" Editable="true" Placeholder="mm/dd/aaaa" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudNumericField @bind-Value="_vehiculo.PrecioCompra" Culture="@_enUS" Label="Precio de Compra" Variant="Variant.Outlined" Margin="Margin.Dense" Format="N2" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="_vehiculo.CompradoA" Label="Comprado a" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <!-- Mapeamos MargenGanancia directamente a float/decimal; la vista maneja el formato -->
+                    <MudNumericField @bind-Value="_vehiculo.MargenGanancia" Label="Margen de Ganancia (%)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Descripción -->
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="_vehiculo.Descripcion" Label="Descripción" Lines="3" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Sección Desperfectos -->
+                <MudItem xs="12" Class="mt-2">
+                    <div class="d-flex align-center gap-1 mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" />
+                        <MudText Typo="Typo.subtitle2" Class="font-weight-bold">Desperfectos</MudText>
+                    </div>
+                    <div class="d-flex gap-2 align-center">
+                        <MudTextField @bind-Value="_nuevoDesperfecto" Placeholder="Ej: Golpe en puerta izquierda..." Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" OnClick="AgregarListaDesperfecto" Class="text-capitalize py-2">Agregar</MudButton>
+                    </div>
+
+                    <!-- Chips de desperfectos agregados temporalmente -->
+                    @if (_listaDesperfectos.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-1 mt-2">
+                            @foreach (var desp in _listaDesperfectos)
+                            {
+                                <MudChip T="string" OnClose="(() => RemoverDesperfecto(desp))" Color="Color.Warning" Variant="Variant.Text">@desp</MudChip>
+                            }
+                        </div>
+                    }
+                </MudItem>
+
+                <!-- Fotos y Documentos laterales -->
+                <MudItem xs="12" sm="6" Class="mt-2">
+                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold mb-1">Fotos</MudText>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-center gap-3">
+                            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="SubirFotosTemporales" Accept=".jpg,.jpeg,.png" Multiple>
+                                <CustomContent>
+                                    <MudButton Variant="Variant.Outlined"
+                                               Color="Color.Default"
+                                               OnClick="@context.OpenFilePickerAsync"
+                                               Class="upload-box d-flex flex-column">
+                                        <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Size="Size.Medium" Class="mb-1" />
+                                        <span style="font-size: 0.75rem;">Subir</span>
+                                    </MudButton>
+                                </CustomContent>
+                                <SelectedTemplate />
+                            </MudFileUpload>
+
+                            <MudText Typo="Typo.caption" Class="text-muted">@_fotosNombres</MudText>
+                        </div>
+
+                        @if (_fotosCargadas.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @foreach (var foto in _fotosCargadas)
+                                {
+                                    <MudChip T="string" OnClose="(() => RemoverFotoTemporal(foto))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
+                                        @RecortarNombreArchivo(foto.Name)
+                                    </MudChip>
+                                }
+                            </div>
+                        }
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" Class="mt-2">
+                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold mb-1">Documentos</MudText>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-center gap-3">
+                            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="SubirDocumentosTemporales" Accept=".pdf,.doc,.docx" Multiple>
+                                <CustomContent>
+                                    <MudButton Variant="Variant.Outlined"
+                                               Color="Color.Default"
+                                               OnClick="@context.OpenFilePickerAsync"
+                                               Class="upload-box d-flex flex-column">
+                                        <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Size="Size.Medium" Class="mb-1" />
+                                        <span style="font-size: 0.75rem;">Subir</span>
+                                    </MudButton>
+                                </CustomContent>
+                                <SelectedTemplate />
+                            </MudFileUpload>
+
+                            <MudText Typo="Typo.caption" Class="text-muted">@_documentosNombres</MudText>
+                        </div>
+
+                        @if (_documentosCargados.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @foreach (var doc in _documentosCargados)
+                                {
+                                    <MudChip T="string" OnClose="(() => RemoverDocumentoTemporal(doc))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
+                                        @RecortarNombreArchivo(doc.Name)
+                                    </MudChip>
+                                }
+                            </div>
+                        }
+                    </div>
+                </MudItem>
+
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancelar" Class="px-5 rounded-lg" Variant="Variant.Outlined">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Guardar" Class="px-5 rounded-lg btn-guardar-custom" Disabled="@(!_formIsValid)">Guardar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
+    [Parameter] public Vehiculos VehiculoParam { get; set; }
+
+    private MudForm _form;
+    private bool _formIsValid;
+    private Vehiculos _vehiculo = new();
+
+    private DateTime? _fechaCompraNullable;
+
+    private string _nuevoDesperfecto = string.Empty;
+    private List<string> _listaDesperfectos = new();
+
+    // Variables de control de archivos adjuntos (memorizados temporalmente)
+    private List<IBrowserFile> _fotosCargadas = new();
+    private List<IBrowserFile> _documentosCargados = new();
+    private string _fotosNombres = "Ningún archivo seleccionado";
+    private string _documentosNombres = "Ningún archivo seleccionado";
+
+    private System.Globalization.CultureInfo _enUS = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+
+    protected override void OnInitialized()
+    {
+        if (VehiculoParam != null)
+        {
+            // Clonamos el objeto para evitar mutar la fila de la tabla antes de guardar
+            _vehiculo = new Vehiculos
+            {
+                Id = VehiculoParam.Id,
+                Marca = VehiculoParam.Marca,
+                Modelo = VehiculoParam.Modelo,
+                Anio = VehiculoParam.Anio == 0 ? 2026 : VehiculoParam.Anio, // Default basado en tu captura
+                Color = VehiculoParam.Color,
+                Vin = VehiculoParam.Vin,
+                Placa = VehiculoParam.Placa,
+                Millaje = VehiculoParam.Millaje,
+                Llaves = VehiculoParam.Llaves == 0 ? 1 : VehiculoParam.Llaves, // Default basado en tu captura
+                Combustible = string.IsNullOrEmpty(VehiculoParam.Combustible) ? "Gasolina" : VehiculoParam.Combustible,
+                Transmision = string.IsNullOrEmpty(VehiculoParam.Transmision) ? "Automática" : VehiculoParam.Transmision,
+                Estado = string.IsNullOrEmpty(VehiculoParam.Estado) ? "Disponible" : VehiculoParam.Estado,
+                Ubicacion = VehiculoParam.Ubicacion,
+                PrecioCompra = VehiculoParam.PrecioCompra,
+                CompradoA = VehiculoParam.CompradoA,
+                MargenGanancia = VehiculoParam.MargenGanancia == 0 ? 15 : VehiculoParam.MargenGanancia,
+                Descripcion = VehiculoParam.Descripcion,
+                FechaCompra = VehiculoParam.FechaCompra
+            };
+
+            if (_vehiculo.FechaCompra != DateTime.MinValue)
+            {
+                _fechaCompraNullable = _vehiculo.FechaCompra;
+            }
+        }
+    }
+
+    private void AgregarListaDesperfecto()
+    {
+        if (!string.IsNullOrWhiteSpace(_nuevoDesperfecto))
+        {
+            _listaDesperfectos.Add(_nuevoDesperfecto.Trim());
+            _nuevoDesperfecto = string.Empty;
+        }
+    }
+
+    private void RemoverDesperfecto(string desp) => _listaDesperfectos.Remove(desp);
+
+    private void SubirFotoTemporal(IBrowserFile file)
+    {
+        if (file != null)
+        {
+            _fotosCargadas.Add(file);
+            _fotosNombres = $"{_fotosCargadas.Count} foto(s) seleccionada(s)";
+        }
+    }
+
+    private void SubirDocumentoTemporal(IBrowserFile file)
+    {
+        if (file != null)
+        {
+            _documentosCargados.Add(file);
+            _documentosNombres = $"{_documentosCargados.Count} documento(s) seleccionado(s)";
+        }
+    }
+
+    private void Cancelar() => MudDialog.Cancel();
+
+    // Cambiamos los métodos de carga para soportar listas (IReadOnlyList) debido al parámetro Multiple
+    private void SubirFotosTemporales(IReadOnlyList<IBrowserFile> files)
+    {
+        if (files != null)
+        {
+            foreach (var file in files)
+            {
+                // Evitamos duplicados visuales si eligen el mismo archivo dos veces
+                if (!_fotosCargadas.Any(f => f.Name == file.Name && f.Size == file.Size))
+                {
+                    _fotosCargadas.Add(file);
+                }
+            }
+            ActualizarContadoresTexto();
+        }
+    }
+
+    private void SubirDocumentosTemporales(IReadOnlyList<IBrowserFile> files)
+    {
+        if (files != null)
+        {
+            foreach (var file in files)
+            {
+                if (!_documentosCargados.Any(d => d.Name == file.Name && d.Size == file.Size))
+                {
+                    _documentosCargados.Add(file);
+                }
+            }
+            ActualizarContadoresTexto();
+        }
+    }
+
+    // 🚀 NUEVOS MÉTODOS: Para eliminar archivos de la lista antes de guardar
+    private void RemoverFotoTemporal(IBrowserFile file)
+    {
+        _fotosCargadas.Remove(file);
+        ActualizarContadoresTexto();
+    }
+
+    private void RemoverDocumentoTemporal(IBrowserFile file)
+    {
+        _documentosCargados.Remove(file);
+        ActualizarContadoresTexto();
+    }
+
+    // Helper para mantener los textos limpios y dinámicos
+    private void ActualizarContadoresTexto()
+    {
+        _fotosNombres = _fotosCargadas.Any()
+            ? $"{_fotosCargadas.Count} foto(s) seleccionada(s)"
+            : "Ningún archivo seleccionado";
+
+        _documentosNombres = _documentosCargados.Any()
+            ? $"{_documentosCargados.Count} documento(s) seleccionado(s)"
+            : "Ningún archivo seleccionado";
+    }
+
+    // Helper opcional para que los nombres largos de los archivos no desbaraten el diseño de los Chips
+    private string RecortarNombreArchivo(string nombre)
+    {
+        if (nombre.Length > 20)
+        {
+            return nombre.Substring(0, 12) + "..." + nombre.Substring(nombre.Length - 5);
+        }
+        return nombre;
+    }
+
+    private async Task Guardar()
+    {
+        await _form.ValidateAsync();
+        if (!_formIsValid) return;
+
+        _vehiculo.FechaCompra = _fechaCompraNullable ?? DateTime.Now;
+
+        if (_vehiculo.Id == 0)
+        {
+            // --- MODO: AGREGAR ---
+            var (exito, mensaje, idGenerado) = await dataconex.AgregarVehiculo(_vehiculo);
+
+            if (exito)
+            {
+                // 1. Guardar Desperfectos
+                foreach (var desp in _listaDesperfectos)
+                {
+                    await dataconex.AgregarDesperfecto(idGenerado, desp);
+                }
+
+                // 2. PROCESAR FOTOS EN LA CARPETA "vehiculos"
+                if (_fotosCargadas.Any())
+                {
+                    // Apuntamos exactamente a wwwroot/vehiculos
+                    string carpetaFotos = Path.Combine(WebHostEnvironment.WebRootPath, "vehiculos");
+                    if (!Directory.Exists(carpetaFotos)) Directory.CreateDirectory(carpetaFotos);
+
+                    foreach (var foto in _fotosCargadas)
+                    {
+                        string nombreUnico = $"{idGenerado}_{Guid.NewGuid()}_{foto.Name}";
+                        string rutaFisicaCompleta = Path.Combine(carpetaFotos, nombreUnico);
+
+                        using var stream = foto.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10);
+                        using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
+                        await stream.CopyToAsync(fileStream);
+
+                        // La URL relativa para la base de datos apuntando a /vehiculos/
+                        string urlRelativa = $"/vehiculos/{nombreUnico}";
+
+                        await dataconex.GuardarRutaArchivo(idGenerado, urlRelativa, "Fotos");
+                    }
+                }
+
+                // 3. PROCESAR DOCUMENTOS EN LA CARPETA "documentosVehiculos"
+                if (_documentosCargados.Any())
+                {
+                    // Apuntamos exactamente a wwwroot/documentosVehiculos
+                    string carpetaDocs = Path.Combine(WebHostEnvironment.WebRootPath, "documentosVehiculos");
+                    if (!Directory.Exists(carpetaDocs)) Directory.CreateDirectory(carpetaDocs);
+
+                    foreach (var doc in _documentosCargados)
+                    {
+                        string nombreUnico = $"{idGenerado}_{Guid.NewGuid()}_{doc.Name}";
+                        string rutaFisicaCompleta = Path.Combine(carpetaDocs, nombreUnico);
+
+                        using var stream = doc.OpenReadStream(maxAllowedSize: 1024 * 1024 * 20);
+                        using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
+                        await stream.CopyToAsync(fileStream);
+
+                        // La URL relativa para la base de datos apuntando a /documentosVehiculos/
+                        string urlRelativa = $"/documentosVehiculos/{nombreUnico}";
+
+                        await dataconex.GuardarRutaArchivo(idGenerado, urlRelativa, "Documentos");
+                    }
+                }
+
+                Snackbar.Add("Vehículo registrado con éxito", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(mensaje, Severity.Error);
+            }
+        }
+        else
+        {
+            // --- MODO: EDITAR ---
+            var (exito, mensaje) = await dataconex.EditarVehiculo(_vehiculo);
+            if (exito)
+            {
+                foreach (var desp in _listaDesperfectos)
+                {
+                    await dataconex.AgregarDesperfecto(_vehiculo.Id, desp);
+                }
+
+                Snackbar.Add("Cambios guardados con éxito", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(mensaje, Severity.Error);
+            }
+        }
+    }
+}
