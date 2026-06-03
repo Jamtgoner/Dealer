@@ -106,3 +106,41 @@ h1:focus {
         right: 15px !important;
         top: 15px !important;
     }
+
+.style-card {
+    border: 1px solid #e0e0e0 !important;
+    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .style-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+
+.image-container {
+    background-color: #f4f6f9; /* Fondo gris claro idéntico a la imagen */
+    height: 180px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.vehicle-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.border-top-dash {
+    border-top: 1px dashed #e0e0e0;
+}
+
+.gap-1 {
+    gap: 4px;
+}
+
+.font-size-xs {
+    font-size: 0.70rem !important;
+}
