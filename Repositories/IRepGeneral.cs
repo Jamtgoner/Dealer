@@ -10,8 +10,11 @@ namespace Dealer.Repositories
         Task<(bool Exito, string Mensaje)> EditarVehiculo(Vehiculos vehiculo);
         Task<bool> GuardarRutaArchivo(int idVehiculo, string url, string tabla);
         Task<Usuarios?> Login(string nombre, string clave);
+        Task<IEnumerable<string>> ObtenerDesperfectosVehiculo(int idVehiculo);
         Task<IEnumerable<string>> ObtenerDocumentosVehiculo(int idVehiculo);
         Task<IEnumerable<string>> ObtenerFotosVehiculo(int idVehiculo);
+        Task<IEnumerable<GastosVehiculo>> ObtenerGastosVehiculo(int idVehiculo);
+        Task<Vehiculos> ObtenerVehiculoPorId(int id);
         Task<IEnumerable<Vehiculos>> ObtenerVehiculos();
     }
 }

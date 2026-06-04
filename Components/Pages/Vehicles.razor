@@ -1,6 +1,7 @@
 ﻿@page "/vehiculos"
 @inject IRepGeneral dataconex
 @inject IDialogService DialogService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Vehiculos</PageTitle>
 
@@ -71,7 +72,7 @@
     </MudPaper>
 </MudContainer>
 
-<MudContainer MaxWidth="MaxWidth.False" Class="pa-6 fondo-suave flex-grow-1 overflow-auto">
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-6 bg-suave flex-grow-1 overflow-auto">
     @if (_fullVehiculos == null)
     {
         <!-- Estado de carga mientras se obtienen los datos -->
@@ -93,7 +94,7 @@
             @foreach (var vehiculo in _fullVehiculos)
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
-                    <MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column style-card">
+                    <MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column style-card" @onclick="() => IrAlPerfil(vehiculo.Id)">
 
                         <!-- Contenedor de la Imagen / Placeholder -->
                         <div class="image-container d-flex align-center justify-center pa-4 text-muted">
@@ -247,5 +248,10 @@
         {
             // Refrescas tu lista principal de la base de datos
         }
+    }
+
+    private void IrAlPerfil(int idVehiculo)
+    {
+        NavigationManager.NavigateTo($"/vehiculo/{idVehiculo}");
     }
 }

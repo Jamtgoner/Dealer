@@ -79,5 +79,9 @@
     <Build Include="dbo\Stored Procedures\usp_AgregarVehiculo.sql" />
     <Build Include="dbo\Stored Procedures\usp_AgregarGastoVehiculo.sql" />
     <Build Include="dbo\Stored Procedures\usp_AgregarDesperfecto.sql" />
+    <Build Include="dbo\Views\vGastosVehiculo.sql" />
+    <Build Include="dbo\Views\vFotosVehiculo.sql" />
+    <Build Include="dbo\Views\vDocumentosVehiculo.sql" />
+    <Build Include="dbo\Views\vDesperfectosVehiculo.sql" />
   </ItemGroup>
 </Project>

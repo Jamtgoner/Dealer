@@ -1,0 +1,298 @@
+﻿@page "/vehiculo/{Id:int}"
+@inject IRepGeneral dataconex
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-4 bg-suavecito">
+    <div class="d-flex justify-content-between align-center mb-4">
+        <div class="d-flex align-center gap-2">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="VolverAlGrid" Color="Color.Default" Edge="Edge.Start" />
+            <div>
+                <MudText Typo="Typo.h5" Class="font-weight-bold">@_vehiculo?.Marca @_vehiculo?.Modelo @_vehiculo?.Anio</MudText>
+                <MudChip T="string" Color="Color.Warning" Variant="Variant.Text" Size="Size.Small" Class="px-0">@_vehiculo?.Estado</MudChip>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Dark" Size="Size.Small">Editar</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small">Eliminar</MudButton>
+        </div>
+    </div>
+
+    @if (_cargando)
+    {
+        <div class="d-flex justify-center my-8">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </div>
+    }
+    else if (_vehiculo == null)
+    {
+        <MudAlert Severity="Severity.Error">No se encontró el vehículo solicitado o no se pudo cargar la información.</MudAlert>
+    }
+    else
+    {
+        <MudGrid Spacing="3">
+            <MudItem xs="12" md="8">
+                <MudPaper Elevation="0" Class="carousel-container d-flex align-center justify-center rounded-lg overflow-hidden mb-4" Style="background-color: #d2dbe5; height: 450px;">
+                    @if (_listaFotos != null && _listaFotos.Any())
+                    {
+                        <MudCarousel TData="string" AutoCycle="false" ShowArrows="true" ShowBullets="true" Class="mud-width-full h-100">
+                            @foreach (var fotoUrl in _listaFotos)
+                            {
+                                <MudCarouselItem Transition="Transition.Slide">
+                                    <div class="d-flex align-center justify-center h-100 w-100 bg-oscusuave">
+                                        <img src="@fotoUrl" alt="Foto Vehículo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                    </div>
+                                </MudCarouselItem>
+                            }
+                        </MudCarousel>
+                    }
+                    else
+                    {
+                        <div class="text-center ">
+                            <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Size="Size.Large" Color="Color.Default" Style="font-size: 5rem;" />
+                        </div>
+                    }
+                </MudPaper>
+
+                <MudPaper Class="pa-6 rounded-lg mb-4" Elevation="1">
+                    <MudText Typo="Typo.h6" Class="font-weight-bold mb-4">Detalles del Vehículo</MudText>
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="4">
+                            <MudText Typo="Typo.caption" Class="text-muted">VIN</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Vin</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudText Typo="Typo.caption" Class="text-muted">Color</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Color?.ToUpper()</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudText Typo="Typo.caption" Class="text-muted">Millaje</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:N0} mi", _vehiculo.Millaje)</MudText>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Tipo de Combustible</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Combustible</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Transmisión</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Transmision</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Precio de Compra</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Comprado a</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.CompradoA?.ToUpper()</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Ubicación</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Ubicacion?.ToUpper()</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.caption" Class="text-muted">Cant. de Llaves</MudText>
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Llaves llaves</MudText>
+                        </MudItem>
+                    </MudGrid>
+
+                    <div class="mt-4 pt-2">
+                        <MudText Typo="Typo.caption" Class="text-muted">Descripción</MudText>
+                        <MudText Typo="Typo.body1">@_vehiculo.Descripcion</MudText>
+                    </div>
+
+                    @if (_listaDesperfectos != null && _listaDesperfectos.Any())
+                    {
+                        <div class="mt-4 pa-4 rounded-lg" style="background-color: #fff5f5; border: 1px solid #ffe3e3;">
+                            <MudText Typo="Typo.subtitle2" Color="Color.Error" Class="font-weight-bold mb-2">Desperfectos</MudText>
+                            <ul class="pl-4 text-danger" style="list-style-type: disc;">
+                                @foreach (var desp in _listaDesperfectos)
+                                {
+                                    <li><MudText Typo="Typo.body2" Color="Color.Error">@desp.ToUpper()</MudText></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </MudPaper>
+
+                <MudPaper Class="pa-6 rounded-lg" Elevation="1">
+                    <div class="d-flex justify-between align-center mb-4">
+                        <div>
+                            <MudText Typo="Typo.h6" Class="font-weight-bold">Gastos</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="text-muted">Total: <strong class="text-dark">@string.Format("{0:C0}", _totalGastos)</strong></MudText>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <MudIconButton Icon="@Icons.Material.Filled.Print" Size="Size.Small" Variant="Variant.Outlined" />
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Dark" Size="Size.Small">Agregar Gasto</MudButton>
+                        </div>
+                    </div>
+
+                    @if (_listaGastos != null && _listaGastos.Any())
+                    {
+                        <div class="d-flex flex-column gap-3">
+                            @foreach (var gasto in _listaGastos)
+                            {
+                                <div class="d-flex justify-between align-center pa-3 rounded-lg border border-solid">
+                                    <div class="d-flex align-center gap-3">
+                                        <div class="pa-2 bg-light rounded">
+                                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Class="text-muted" />
+                                        </div>
+                                        <div>
+                                            <div class="d-flex align-center gap-2">
+                                                <MudText Typo="Typo.body1" Class="font-weight-bold">@gasto.Descripcion?.ToUpper()</MudText>
+                                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Filled">@gasto.Tipo</MudChip>
+                                            </div>
+                                            <MudText Typo="Typo.caption" Class="text-muted">
+                                                @(string.IsNullOrEmpty(gasto.Suplidor) ? "" : $"{gasto.Suplidor} • ")@gasto.Fecha.ToString("dd/MM/yyyy")
+                                            </MudText>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-center gap-2">
+                                        <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:C0}", gasto.Monto)</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="text-muted text-center py-4">No hay gastos registrados para este vehículo.</MudText>
+                    }
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="4">
+                <MudPaper Class="pa-6 rounded-lg sticky-sidebar" Elevation="1">
+                    <div class="d-flex align-center gap-2 mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Calculate" />
+                        <MudText Typo="Typo.h6" Class="font-weight-bold">Calculadora de Precio</MudText>
+                    </div>
+
+                    <MudGrid Spacing="2" Class="mb-3">
+                        <MudItem xs="6">
+                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #f8faff;">
+                                <MudText Typo="Typo.caption" Class="text-muted">Costo de Compra</MudText>
+                                <MudText Typo="Typo.h6" Class="font-weight-bold" Color="Color.Primary">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #fffbf5;">
+                                <MudText Typo="Typo.caption" Class="text-muted">Costos de Reparación</MudText>
+                                <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #b7791f;">@string.Format("{0:C0}", _totalGastos)</MudText>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+
+                    <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5;">
+                        <MudText Typo="Typo.caption" Class="text-muted">Total Invertido</MudText>
+                        <MudText Typo="Typo.h5" Class="font-weight-bold" Color="Color.Error">@string.Format("{0:C0}", _totalInvertido)</MudText>
+                    </div>
+
+                    <div class="d-flex justify-between py-2 border-bottom">
+                        <MudText Typo="Typo.body2" Class="text-muted">Precio Mínimo</MudText>
+                        <MudText Typo="Typo.body2" Class="font-weight-bold">@string.Format("{0:C2}", _precioMinimo)</MudText>
+                    </div>
+
+                    <div class="pa-4 rounded-lg my-4 d-flex justify-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+                        <div>
+                            <MudText Typo="Typo.caption" Style="color: #166534;">Precio Ideal (@(_vehiculo.MargenGanancia)% Margen de Ganancia)</MudText>
+                            <MudText Typo="Typo.h5" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _precioIdeal)</MudText>
+                        </div>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Style="color: #15803d;" />
+                    </div>
+
+                    <div class="d-flex justify-between py-1">
+                        <MudText Typo="Typo.body2" Class="text-muted">Ganancia Estimada</MudText>
+                        <MudText Typo="Typo.body2" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _gananciaEstimada)</MudText>
+                    </div>
+                    <div class="d-flex justify-between py-1">
+                        <MudText Typo="Typo.body2" Class="text-muted">ROI</MudText>
+                        <MudText Typo="Typo.body2" Class="font-weight-bold">@string.Format("{0:F1}%", _vehiculo.MargenGanancia)</MudText>
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Vehiculos _vehiculo; 
+    private List<string> _listaFotos = new();
+    private List<string> _listaDesperfectos = new();
+    private List<GastosVehiculo> _listaGastos = new();
+
+    private bool _cargando = true;
+    private decimal _totalGastos = 0;
+    private decimal _totalInvertido = 0;
+    private decimal _precioMinimo = 0;
+    private decimal _precioIdeal = 0;
+    private decimal _gananciaEstimada = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatosPerfil();
+    }
+
+    private async Task CargarDatosPerfil()
+    {
+        try
+        {
+            _cargando = true;
+
+            // 1. Obtener los datos base del vehículo (asegúrate de tener este método en dataconex)
+            _vehiculo = await dataconex.ObtenerVehiculoPorId(Id);
+
+            if (_vehiculo != null)
+            {
+                // 2. Ejecutar tus 3 métodos asíncronos en paralelo para óptimo rendimiento
+                var tareaFotos = dataconex.ObtenerFotosVehiculo(Id);
+                var tareaDesperfectos = dataconex.ObtenerDesperfectosVehiculo(Id);
+                var tareaGastos = dataconex.ObtenerGastosVehiculo(Id);
+
+                await Task.WhenAll(tareaFotos, tareaDesperfectos, tareaGastos);
+
+                _listaFotos = (await tareaFotos).ToList();
+                _listaDesperfectos = (await tareaDesperfectos).ToList();
+                _listaGastos = (await tareaGastos).ToList();
+
+                // 3. Cálculos Financieros automáticos basados en tus pantallas
+                _totalGastos = _listaGastos.Sum(g => g.Monto);
+                _totalInvertido = (decimal)_vehiculo.PrecioCompra + _totalGastos;
+
+                // Cálculos de Margen y ROI
+                decimal factorMargen = (decimal)(_vehiculo.MargenGanancia / 100m);
+
+                // Precio Ideal con margen sobre el costo total invertido
+                if (factorMargen < 1)
+                {
+                    _precioIdeal = _totalInvertido / (1 - factorMargen);
+                }
+                else
+                {
+                    _precioIdeal = _totalInvertido * (1 + factorMargen);
+                }
+
+                _precioMinimo = _precioIdeal * 0.91m; // Estimación aproximada de tu UI ($14,332.5)
+                _gananciaEstimada = _precioIdeal - _totalInvertido;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar el perfil: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _cargando = false;
+        }
+    }
+
+    private void VolverAlGrid()
+    {
+        NavigationManager.NavigateTo("/vehiculos"); // Ajusta a la ruta de tu listado principal
+    }
+}

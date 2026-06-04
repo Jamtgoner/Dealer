@@ -41,6 +41,30 @@ namespace Dealer.Repositories
                 new { IdVehiculo = idVehiculo });
         }
 
+        public async Task<IEnumerable<string>> ObtenerDesperfectosVehiculo(int idVehiculo)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+
+            return await conexion.QueryAsync<string>(
+                @"SELECT Descripcion FROM DesperfectosVehiculo WHERE IdVehiculo = @IdVehiculo",
+                new { IdVehiculo = idVehiculo });
+        }
+
+        public async Task<IEnumerable<GastosVehiculo>> ObtenerGastosVehiculo(int idVehiculo)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+
+            return await conexion.QueryAsync<GastosVehiculo>(
+                @"SELECT * FROM vGastosVehiculo WHERE IdVehiculo = @IdVehiculo",
+                new { IdVehiculo = idVehiculo });
+        }
+
+        public async Task<Vehiculos> ObtenerVehiculoPorId(int id)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            return await conexion.QueryFirstOrDefaultAsync<Vehiculos>("SELECT * from vVehiculos WHERE Id = @Id", new { Id = id });
+        }
+
         public async Task<(bool Exito, string Mensaje, int IdGenerado)> AgregarVehiculo(Vehiculos vehiculo)
         {
             using var conexion = new SqlConnection(_connectionString);
@@ -138,7 +162,6 @@ namespace Dealer.Repositories
             }
         }
 
-        // Método provisional para cuando crees las tablas de Fotos y Documentos
         public async Task<bool> GuardarRutaArchivo(int idVehiculo, string url, string tabla)
         {
             using var conexion = new SqlConnection(_connectionString);

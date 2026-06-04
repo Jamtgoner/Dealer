@@ -56,6 +56,14 @@ h1:focus {
     background-color: #F7F9FA !important;
 }
 
+.bg-suavecito {
+    background-color: #FAFAFA !important;
+}
+
+.bg-oscusuave {
+    background-color: #d2dbe5 !important;
+}
+
 /* Clase para el contenedor del menú */
 .nav-custom-white .mud-nav-link-icon {
     font-size: 1.75rem !important;
@@ -119,7 +127,7 @@ h1:focus {
     }
 
 .image-container {
-    background-color: #f4f6f9; /* Fondo gris claro idéntico a la imagen */
+    background-color: #ebeef3;
     height: 180px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -165,4 +173,30 @@ h1:focus {
 
 .gap-3 {
     gap: 12px;
+}
+
+.font-weight-bold {
+    font-weight: 700;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+.sticky-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+/* Personalización Flechas del Carrusel para que queden limpias */
+.mud-carousel-elements {
+    height: 100% !important;
 }
