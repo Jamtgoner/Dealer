@@ -102,7 +102,7 @@ namespace Dealer.Repositories
             }
         }
 
-        public async Task<(bool Exito, string Mensaje, int IdGenerado)> AgregarDesperfecto(int idVehiculo, string descripcion)
+        public async Task<(bool Exito, string Mensaje, int IdGenerado)> AgregarDesperfecto(int idVehiculo, string descripcion, bool limpiarHistorial = false)
         {
             using var conexion = new SqlConnection(_connectionString);
             try
@@ -112,7 +112,8 @@ namespace Dealer.Repositories
                     new
                     {
                         IdVehiculo = idVehiculo,
-                        Descripcion = descripcion
+                        Descripcion = descripcion,
+                        LimpiarHistorial = limpiarHistorial
                     },
                     commandType: CommandType.StoredProcedure
                 );
@@ -168,6 +169,17 @@ namespace Dealer.Repositories
             string query = tabla == "Fotos"
                 ? "INSERT INTO FotosVehiculo (IdVehiculo, ImagenUrl) VALUES (@IdVehiculo, @Url)"
                 : "INSERT INTO DocumentosVehiculo (IdVehiculo, DocumentoUrl) VALUES (@IdVehiculo, @Url)";
+
+            var rows = await conexion.ExecuteAsync(query, new { IdVehiculo = idVehiculo, Url = url });
+            return rows > 0;
+        }
+
+        public async Task<bool> EliminarArchivoVehiculo(int idVehiculo, string url, string tabla)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            string query = tabla == "Fotos"
+                ? "DELETE FROM FotosVehiculo WHERE IdVehiculo = @IdVehiculo AND ImagenUrl = @Url"
+                : "DELETE FROM DocumentosVehiculo WHERE IdVehiculo = @IdVehiculo AND DocumentoUrl = @Url";
 
             var rows = await conexion.ExecuteAsync(query, new { IdVehiculo = idVehiculo, Url = url });
             return rows > 0;

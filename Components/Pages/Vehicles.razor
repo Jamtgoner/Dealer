@@ -1,4 +1,5 @@
-﻿@page "/vehiculos"
+﻿@page "/"
+@page "/vehiculos"
 @inject IRepGeneral dataconex
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
@@ -176,6 +177,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
         // 1. Obtener la data de los vehículos
         var data = await dataconex.ObtenerVehiculos();
         _fullVehiculos = data.ToList();
@@ -232,21 +238,7 @@
 
         if (!resultado.Canceled)
         {
-            // Refrescas tu lista _fullVehiculos ejecutando el OnInitializedAsync()
-        }
-    }
-
-    private async Task AbrirModalEditar(Vehiculos vehiculoSeleccionado)
-    {
-        var parametros = new DialogParameters<VehiculoDialog> { { x => x.VehiculoParam, vehiculoSeleccionado } };
-        var opciones = new DialogOptions { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true, CloseButton = true };
-
-        var dialog = await DialogService.ShowAsync<VehiculoDialog>("Editar Vehículo", parametros, opciones);
-        var resultado = await dialog.Result;
-
-        if (!resultado.Canceled)
-        {
-            // Refrescas tu lista principal de la base de datos
+            await CargarDatos();
         }
     }
 

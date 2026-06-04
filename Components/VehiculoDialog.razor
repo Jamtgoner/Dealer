@@ -71,7 +71,7 @@
 
                 <!-- Fila 4: Fecha Compra, Precio Compra, Comprado A, Margen Ganancia -->
                 <MudItem xs="12" sm="3">
-                    <MudDatePicker @bind-Date="_fechaCompraNullable" Label="Fecha de Compra" Editable="true" Placeholder="mm/dd/aaaa" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudDatePicker @bind-Date="_fechaCompraNullable" Label="Fecha de Compra" Editable="true" Placeholder="mm/dd/aaaa" DateFormat="MM/dd/yyyy" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" sm="3">
                     <MudNumericField @bind-Value="_vehiculo.PrecioCompra" Culture="@_enUS" Label="Precio de Compra" Variant="Variant.Outlined" Margin="Margin.Dense" Format="N2" />
@@ -135,14 +135,22 @@
 
                         @if (_fotosCargadas.Any())
                         {
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                @foreach (var foto in _fotosCargadas)
-                                {
-                                    <MudChip T="string" OnClose="(() => RemoverFotoTemporal(foto))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
-                                        @RecortarNombreArchivo(foto.Name)
-                                    </MudChip>
-                                }
-                            </div>
+                            @foreach (var foto in _fotosCargadas)
+                            {
+                                <MudChip T="string" OnClose="(() => RemoverFotoTemporal(foto))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
+                                    @RecortarNombreArchivo(foto.Name) (Nuevo)
+                                </MudChip>
+                            }
+                        }
+
+                        @if (_fotosExistentesBD.Any())
+                        {
+                            @foreach (var fotoUrl in _fotosExistentesBD)
+                            {
+                                <MudChip T="string" OnClose="(() => RemoverFotoExistente(fotoUrl))" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small" Class="rounded-pill">
+                                    @RecortarNombreArchivo(Path.GetFileName(fotoUrl))
+                                </MudChip>
+                            }
                         }
                     </div>
                 </MudItem>
@@ -169,14 +177,22 @@
 
                         @if (_documentosCargados.Any())
                         {
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                @foreach (var doc in _documentosCargados)
-                                {
-                                    <MudChip T="string" OnClose="(() => RemoverDocumentoTemporal(doc))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
-                                        @RecortarNombreArchivo(doc.Name)
-                                    </MudChip>
-                                }
-                            </div>
+                            @foreach (var doc in _documentosCargados)
+                            {
+                                <MudChip T="string" OnClose="(() => RemoverDocumentoTemporal(doc))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
+                                    @RecortarNombreArchivo(doc.Name) (Nuevo)
+                                </MudChip>
+                            }
+                        }
+
+                        @if (_documentosExistentesBD.Any())
+                        {
+                            @foreach (var docUrl in _documentosExistentesBD)
+                            {
+                                <MudChip T="string" OnClose="(() => RemoverDocumentoExistente(docUrl))" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small" Class="rounded-pill">
+                                    @RecortarNombreArchivo(Path.GetFileName(docUrl))
+                                </MudChip>
+                            }
                         }
                     </div>
                 </MudItem>
@@ -195,8 +211,8 @@
     [Parameter] public Vehiculos? VehiculoParam { get; set; }
 
     private MudForm _form;
-    private bool _formIsValid;
     private Vehiculos _vehiculo = new();
+    private bool _formIsValid;
 
     private DateTime? _fechaCompraNullable;
 
@@ -206,27 +222,32 @@
     // Variables de control de archivos adjuntos (memorizados temporalmente)
     private List<IBrowserFile> _fotosCargadas = new();
     private List<IBrowserFile> _documentosCargados = new();
+    private List<string> _fotosExistentesBD = new();
+    private List<string> _documentosExistentesBD = new();
     private string _fotosNombres = "Ningún archivo seleccionado";
     private string _documentosNombres = "Ningún archivo seleccionado";
 
+    // Estructura temporal para recordar qué ruta física y qué tabla limpiar al guardar
+    private List<(string Url, string Tabla)> _archivosEliminados = new();
+
     private System.Globalization.CultureInfo _enUS = System.Globalization.CultureInfo.GetCultureInfo("en-US");
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (VehiculoParam != null)
         {
-            // Clonamos el objeto para evitar mutar la fila de la tabla antes de guardar
+            // 1. Clonamos las propiedades del vehículo (Código que ya tienes)
             _vehiculo = new Vehiculos
             {
                 Id = VehiculoParam.Id,
                 Marca = VehiculoParam.Marca,
                 Modelo = VehiculoParam.Modelo,
-                Anio = VehiculoParam.Anio == 0 ? 2026 : VehiculoParam.Anio, // Default basado en tu captura
+                Anio = VehiculoParam.Anio == 0 ? 2026 : VehiculoParam.Anio,
                 Color = VehiculoParam.Color,
                 Vin = VehiculoParam.Vin,
                 Placa = VehiculoParam.Placa,
                 Millaje = VehiculoParam.Millaje,
-                Llaves = VehiculoParam.Llaves == 0 ? 1 : VehiculoParam.Llaves, // Default basado en tu captura
+                Llaves = VehiculoParam.Llaves == 0 ? 1 : VehiculoParam.Llaves,
                 Combustible = string.IsNullOrEmpty(VehiculoParam.Combustible) ? "Gasolina" : VehiculoParam.Combustible,
                 Transmision = string.IsNullOrEmpty(VehiculoParam.Transmision) ? "Automática" : VehiculoParam.Transmision,
                 Estado = string.IsNullOrEmpty(VehiculoParam.Estado) ? "Disponible" : VehiculoParam.Estado,
@@ -242,6 +263,21 @@
             {
                 _fechaCompraNullable = _vehiculo.FechaCompra;
             }
+
+            // 🚀 2. CARGAR DESPERFECTOS EXISTENTES DESDE BASE DE DATOS
+            var desperfectosBD = await dataconex.ObtenerDesperfectosVehiculo(_vehiculo.Id);
+            if (desperfectosBD != null)
+            {
+                _listaDesperfectos = desperfectosBD.ToList();
+            }
+
+            // 🚀 3. MOSTRAR CONTADORES DE ARCHIVOS EXISTENTES
+            var fotos = await dataconex.ObtenerFotosVehiculo(_vehiculo.Id);
+            _fotosExistentesBD = fotos.ToList();
+            var docs = await dataconex.ObtenerDocumentosVehiculo(_vehiculo.Id);
+            _documentosExistentesBD = docs.ToList();
+
+            ActualizarContadoresTexto();
         }
     }
 
@@ -276,7 +312,6 @@
 
     private void Cancelar() => MudDialog.Cancel();
 
-    // Cambiamos los métodos de carga para soportar listas (IReadOnlyList) debido al parámetro Multiple
     private void SubirFotosTemporales(IReadOnlyList<IBrowserFile> files)
     {
         if (files != null)
@@ -324,13 +359,39 @@
     // Helper para mantener los textos limpios y dinámicos
     private void ActualizarContadoresTexto()
     {
-        _fotosNombres = _fotosCargadas.Any()
-            ? $"{_fotosCargadas.Count} foto(s) seleccionada(s)"
+        int totalFotos = _fotosCargadas.Count + _fotosExistentesBD.Count;
+        _fotosNombres = totalFotos > 0
+            ? $"{totalFotos} foto(s) en total"
             : "Ningún archivo seleccionado";
 
-        _documentosNombres = _documentosCargados.Any()
-            ? $"{_documentosCargados.Count} documento(s) seleccionado(s)"
+        int totalDocs = _documentosCargados.Count + _documentosExistentesBD.Count;
+        _documentosNombres = totalDocs > 0
+            ? $"{totalDocs} documento(s) en total"
             : "Ningún archivo seleccionado";
+    }
+
+    private void RemoverFotoExistente(string urlArchivo)
+    {
+        if (string.IsNullOrEmpty(urlArchivo)) return;
+
+        // 1. Lo guardamos en la lista de espera para borrar al Guardar
+        _archivosEliminados.Add((urlArchivo, "Fotos"));
+
+        // 2. Lo quitamos de la vista
+        _fotosExistentesBD.Remove(urlArchivo);
+        ActualizarContadoresTexto();
+    }
+
+    private void RemoverDocumentoExistente(string urlArchivo)
+    {
+        if (string.IsNullOrEmpty(urlArchivo)) return;
+
+        // 1. Lo guardamos en la lista de espera para borrar al Guardar
+        _archivosEliminados.Add((urlArchivo, "Documentos"));
+
+        // 2. Lo quitamos de la vista
+        _documentosExistentesBD.Remove(urlArchivo);
+        ActualizarContadoresTexto();
     }
 
     // Helper opcional para que los nombres largos de los archivos no desbaraten el diseño de los Chips
@@ -352,7 +413,9 @@
 
         if (_vehiculo.Id == 0)
         {
-            // --- MODO: AGREGAR ---
+            // ==========================================
+            // --- MODO: AGREGAR (NUEVO VEHÍCULO) ---
+            // ==========================================
             var (exito, mensaje, idGenerado) = await dataconex.AgregarVehiculo(_vehiculo);
 
             if (exito)
@@ -363,10 +426,9 @@
                     await dataconex.AgregarDesperfecto(idGenerado, desp);
                 }
 
-                // 2. PROCESAR FOTOS EN LA CARPETA "vehiculos"
+                // 2. Procesar Fotos Nuevas
                 if (_fotosCargadas.Any())
                 {
-                    // Apuntamos exactamente a wwwroot/vehiculos
                     string carpetaFotos = Path.Combine(WebHostEnvironment.WebRootPath, "vehiculos");
                     if (!Directory.Exists(carpetaFotos)) Directory.CreateDirectory(carpetaFotos);
 
@@ -375,21 +437,18 @@
                         string nombreUnico = $"{idGenerado}_{Guid.NewGuid()}_{foto.Name}";
                         string rutaFisicaCompleta = Path.Combine(carpetaFotos, nombreUnico);
 
-                        using var stream = foto.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10);
+                        using var stream = foto.OpenReadStream(maxAllowedSize: 1024 * 1024 * 15);
                         using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
                         await stream.CopyToAsync(fileStream);
 
-                        // La URL relativa para la base de datos apuntando a /vehiculos/
                         string urlRelativa = $"/vehiculos/{nombreUnico}";
-
                         await dataconex.GuardarRutaArchivo(idGenerado, urlRelativa, "Fotos");
                     }
                 }
 
-                // 3. PROCESAR DOCUMENTOS EN LA CARPETA "documentosVehiculos"
+                // 3. Procesar Documentos Nuevos
                 if (_documentosCargados.Any())
                 {
-                    // Apuntamos exactamente a wwwroot/documentosVehiculos
                     string carpetaDocs = Path.Combine(WebHostEnvironment.WebRootPath, "documentosVehiculos");
                     if (!Directory.Exists(carpetaDocs)) Directory.CreateDirectory(carpetaDocs);
 
@@ -402,37 +461,140 @@
                         using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
                         await stream.CopyToAsync(fileStream);
 
-                        // La URL relativa para la base de datos apuntando a /documentosVehiculos/
                         string urlRelativa = $"/documentosVehiculos/{nombreUnico}";
-
                         await dataconex.GuardarRutaArchivo(idGenerado, urlRelativa, "Documentos");
                     }
                 }
 
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add("Vehículo registrado con éxito", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
             else
             {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add(mensaje, Severity.Error);
             }
         }
         else
         {
-            // --- MODO: EDITAR ---
+            // ==========================================
+            // --- MODO: EDITAR (VEHÍCULO EXISTENTE) ---
+            // ==========================================
             var (exito, mensaje) = await dataconex.EditarVehiculo(_vehiculo);
             if (exito)
             {
+                // 1. Guardar Desperfectos
+                int index = 0;
                 foreach (var desp in _listaDesperfectos)
                 {
-                    await dataconex.AgregarDesperfecto(_vehiculo.Id, desp);
+                    bool limpiar = (index == 0);
+                    await dataconex.AgregarDesperfecto(_vehiculo.Id, desp, limpiar);
+                    index++;
                 }
 
+                // 2. PURGAR ARCHIVOS ELIMINADOS EN LA VISTA (Base de Datos y wwwroot)
+                if (_archivosEliminados.Any())
+                {
+                    foreach (var archivo in _archivosEliminados)
+                    {
+                        // Borrado lógico de la Base de Datos
+                        await dataconex.EliminarArchivoVehiculo(_vehiculo.Id, archivo.Url, archivo.Tabla);
+
+                        // Borrado físico del disco del servidor
+                        try
+                        {
+                            string rutaFisica = Path.Combine(WebHostEnvironment.WebRootPath, archivo.Url.TrimStart('/'));
+                            if (File.Exists(rutaFisica))
+                            {
+                                File.Delete(rutaFisica);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error eliminando archivo físico en diferido: {ex.Message}");
+                        }
+                    }
+
+                    _archivosEliminados.Clear(); // Limpiamos la lista de pendientes
+                }
+
+                // 3. PROCESAR FOTOS NUEVAS EN LA EDICIÓN
+                if (_fotosCargadas != null && _fotosCargadas.Any())
+                {
+                    string carpetaFotos = Path.Combine(WebHostEnvironment.WebRootPath, "vehiculos");
+                    if (!Directory.Exists(carpetaFotos)) Directory.CreateDirectory(carpetaFotos);
+
+                    var fotosAProcesar = _fotosCargadas.ToList();
+
+                    foreach (var foto in fotosAProcesar)
+                    {
+                        try
+                        {
+                            string nombreUnico = $"{_vehiculo.Id}_{Guid.NewGuid()}_{foto.Name}";
+                            string rutaFisicaCompleta = Path.Combine(carpetaFotos, nombreUnico);
+
+                            // Aumentado preventivamente a 15MB por si las fotos son muy pesadas
+                            using var stream = foto.OpenReadStream(maxAllowedSize: 1024 * 1024 * 15);
+                            using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+
+                            string urlRelativa = $"/vehiculos/{nombreUnico}";
+                            await dataconex.GuardarRutaArchivo(_vehiculo.Id, urlRelativa, "Fotos");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"🔴 Error crítico procesando la foto {foto.Name}: {ex.Message}");
+                            Snackbar.Add($"No se pudo cargar la foto {foto.Name}.", Severity.Warning);
+                        }
+                    }
+
+                    _fotosCargadas.Clear(); // Limpiamos la lista temporal de subidas
+                }
+
+                // 4. PROCESAR DOCUMENTOS NUEVOS EN LA EDICIÓN
+                if (_documentosCargados != null && _documentosCargados.Any())
+                {
+                    string carpetaDocs = Path.Combine(WebHostEnvironment.WebRootPath, "documentosVehiculos");
+                    if (!Directory.Exists(carpetaDocs)) Directory.CreateDirectory(carpetaDocs);
+
+                    var docsAProcesar = _documentosCargados.ToList();
+
+                    foreach (var doc in docsAProcesar)
+                    {
+                        try
+                        {
+                            string nombreUnico = $"{_vehiculo.Id}_{Guid.NewGuid()}_{doc.Name}";
+                            string rutaFisicaCompleta = Path.Combine(carpetaDocs, nombreUnico);
+
+                            using var stream = doc.OpenReadStream(maxAllowedSize: 1024 * 1024 * 20);
+                            using var fileStream = new FileStream(rutaFisicaCompleta, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+
+                            string urlRelativa = $"/documentosVehiculos/{nombreUnico}";
+                            await dataconex.GuardarRutaArchivo(_vehiculo.Id, urlRelativa, "Documentos");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"🔴 Error crítico procesando el documento {doc.Name}: {ex.Message}");
+                            Snackbar.Add($"No se pudo cargar el documento {doc.Name}.", Severity.Warning);
+                        }
+                    }
+
+                    _documentosCargados.Clear(); // Limpiamos la lista temporal de subidas
+                }
+
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add("Cambios guardados con éxito", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
             else
             {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add(mensaje, Severity.Error);
             }
         }

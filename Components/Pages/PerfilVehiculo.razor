@@ -1,6 +1,7 @@
 ﻿@page "/vehiculo/{Id:int}"
 @inject IRepGeneral dataconex
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-4 bg-suavecito">
@@ -13,8 +14,8 @@
             </div>
         </div>
         <div class="d-flex gap-2">
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Dark" Size="Size.Small">Editar</MudButton>
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small">Eliminar</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="EditarVehiculo" Color="Color.Dark" Size="Size.Small">Editar</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="EliminarVehiculo" Color="Color.Error" Size="Size.Small">Eliminar</MudButton>
         </div>
     </div>
 
@@ -58,47 +59,46 @@
                     <MudText Typo="Typo.h6" Class="font-weight-bold mb-4">Detalles del Vehículo</MudText>
                     <MudGrid Spacing="2">
                         <MudItem xs="12" sm="4">
-                            <MudText Typo="Typo.caption" Class="text-muted">VIN</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Vin</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">VIN</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Vin</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="4">
-                            <MudText Typo="Typo.caption" Class="text-muted">Color</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Color?.ToUpper()</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Color</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Color?.ToUpper()</MudText>
                         </MudItem>
+
                         <MudItem xs="12" sm="4">
-                            <MudText Typo="Typo.caption" Class="text-muted">Millaje</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:N0} mi", _vehiculo.Millaje)</MudText>
-                        </MudItem>
-
-                        <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Tipo de Combustible</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Combustible</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Millaje</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@string.Format("{0:N0} mi", _vehiculo.Millaje)</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Transmisión</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Transmision</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Tipo de Combustible</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Combustible</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Precio de Compra</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
-                        </MudItem>
-
-                        <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Comprado a</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.CompradoA?.ToUpper()</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Transmisión</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Transmision</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Ubicación</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Ubicacion?.ToUpper()</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Precio de Compra</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="mt-2">
-                            <MudText Typo="Typo.caption" Class="text-muted">Cant. de Llaves</MudText>
-                            <MudText Typo="Typo.body1" Class="font-weight-bold">@_vehiculo.Llaves llaves</MudText>
+                            <MudText Typo="Typo.body1" Class="text-muted">Comprado a</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.CompradoA?.ToUpper()</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.body1" Class="text-muted">Ubicación</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Ubicacion?.ToUpper()</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="4" Class="mt-2">
+                            <MudText Typo="Typo.body1" Class="text-muted">Cant. de Llaves</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@_vehiculo.Llaves llaves</MudText>
                         </MudItem>
                     </MudGrid>
 
                     <div class="mt-4 pt-2">
-                        <MudText Typo="Typo.caption" Class="text-muted">Descripción</MudText>
+                        <MudText Typo="Typo.h6" Class="">Descripción</MudText>
                         <MudText Typo="Typo.body1">@_vehiculo.Descripcion</MudText>
                     </div>
 
@@ -218,7 +218,7 @@
     }
 </MudContainer>
 
-@code {
+    @code {
     [Parameter] public int Id { get; set; }
 
     private Vehiculos _vehiculo; 
@@ -294,5 +294,33 @@
     private void VolverAlGrid()
     {
         NavigationManager.NavigateTo("/vehiculos"); // Ajusta a la ruta de tu listado principal
+    }
+
+    private async Task EditarVehiculo()
+    {
+        var parametros = new DialogParameters<VehiculoDialog>
+    {
+        { x => x.VehiculoParam, _vehiculo }
+    };
+        var opciones = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Large,
+            BackdropClick = false,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<VehiculoDialog>("Agregar Vehículo", parametros, opciones);
+        var resultado = await dialog.Result;
+
+        if (!resultado.Canceled)
+        {
+            await OnInitializedAsync();
+        }
+    }
+
+    private async Task EliminarVehiculo()
+    {
+        
     }
 }
