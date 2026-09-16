@@ -413,9 +413,7 @@
 
         if (_vehiculo.Id == 0)
         {
-            // ==========================================
             // --- MODO: AGREGAR (NUEVO VEHÍCULO) ---
-            // ==========================================
             var (exito, mensaje, idGenerado) = await dataconex.AgregarVehiculo(_vehiculo);
 
             if (exito)
@@ -480,9 +478,7 @@
         }
         else
         {
-            // ==========================================
             // --- MODO: EDITAR (VEHÍCULO EXISTENTE) ---
-            // ==========================================
             var (exito, mensaje) = await dataconex.EditarVehiculo(_vehiculo);
             if (exito)
             {

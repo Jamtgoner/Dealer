@@ -243,13 +243,10 @@
         try
         {
             _cargando = true;
-
-            // 1. Obtener los datos base del vehículo (asegúrate de tener este método en dataconex)
             _vehiculo = await dataconex.ObtenerVehiculoPorId(Id);
 
             if (_vehiculo != null)
             {
-                // 2. Ejecutar tus 3 métodos asíncronos en paralelo para óptimo rendimiento
                 var tareaFotos = dataconex.ObtenerFotosVehiculo(Id);
                 var tareaDesperfectos = dataconex.ObtenerDesperfectosVehiculo(Id);
                 var tareaGastos = dataconex.ObtenerGastosVehiculo(Id);
