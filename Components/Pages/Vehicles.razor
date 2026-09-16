@@ -74,14 +74,14 @@
 </MudContainer>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-6 bg-suave flex-grow-1 overflow-auto">
-    @if (_fullVehiculos == null)
+    @if (VehiculosFiltrados == null)
     {
         <!-- Estado de carga mientras se obtienen los datos -->
         <MudGrid Justify="Justify.Center" Class="align-center" Style="height: 200px;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
         </MudGrid>
     }
-    else if (!_fullVehiculos.Any())
+    else if (!VehiculosFiltrados.Any())
     {
         <!-- Mensaje si no hay registros -->
         <MudText Typo="Typo.h6" Align="Align.Center" Class="text-muted pa-4">
@@ -92,7 +92,7 @@
     {
         <!-- Grid responsivo: 1 columna en móvil, 2 en tablet, 4 en pantallas grandes -->
         <MudGrid Spacing="4">
-            @foreach (var vehiculo in _fullVehiculos)
+            @foreach (var vehiculo in VehiculosFiltrados)
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column style-card" @onclick="() => IrAlPerfil(vehiculo.Id)">
@@ -179,6 +179,15 @@
     {
         await CargarDatos();
     }
+
+    private IEnumerable<Vehiculos> VehiculosFiltrados => _fullVehiculos
+    .Where(v => string.IsNullOrWhiteSpace(busqueda) ||
+        (v.Marca?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+        (v.Modelo?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+        (v.Anio.ToString().Contains(busqueda)) ||
+        (v.Color?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+        (v.Vin?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+        (v.Placa?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false));
 
     private async Task CargarDatos()
     {

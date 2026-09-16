@@ -184,5 +184,27 @@ namespace Dealer.Repositories
             var rows = await conexion.ExecuteAsync(query, new { IdVehiculo = idVehiculo, Url = url });
             return rows > 0;
         }
+
+        public async Task<(bool Exito, string Mensaje)> SoftDeleteVehiculo(int id)
+        {
+            try
+            {
+                using var conexion = new SqlConnection(_connectionString);
+                var parametros = new DynamicParameters();
+                parametros.Add("@Id", id);
+
+                await conexion.ExecuteAsync(
+                    "usp_SoftDelete",
+                    parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return (true, "Vehiculo eliminado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"No se pudo eliminar el vehiculo: {ex.Message}");
+            }
+        }
     }
 }

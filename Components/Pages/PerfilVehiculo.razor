@@ -117,10 +117,10 @@
                 </MudPaper>
 
                 <MudPaper Class="pa-6 rounded-lg" Elevation="1">
-                    <div class="d-flex justify-between align-center mb-4">
+                    <div class="d-flex justify-space-between align-center mb-4">
                         <div>
-                            <MudText Typo="Typo.h6" Class="font-weight-bold">Gastos</MudText>
-                            <MudText Typo="Typo.subtitle2" Class="text-muted">Total: <strong class="text-dark">@string.Format("{0:C0}", _totalGastos)</strong></MudText>
+                            <MudText Typo="Typo.h6" > Gastos</MudText>
+                            <MudText Typo="Typo.button" >Total: <strong class="text-muted">@string.Format("{0:C0}", _totalGastos)</strong></MudText>
                         </div>
                         <div class="d-flex gap-2">
                             <MudIconButton Icon="@Icons.Material.Filled.Print" Size="Size.Small" Variant="Variant.Outlined" />
@@ -174,44 +174,40 @@
                     <MudGrid Spacing="2" Class="mb-3">
                         <MudItem xs="6">
                             <div class="pa-3 rounded-lg border border-solid" style="background-color: #f8faff;">
-                                <MudText Typo="Typo.caption" Class="text-muted">Costo de Compra</MudText>
+                                <MudText Typo="Typo.subtitle2">Costo de Compra</MudText>
                                 <MudText Typo="Typo.h6" Class="font-weight-bold" Color="Color.Primary">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
                             </div>
                         </MudItem>
                         <MudItem xs="6">
                             <div class="pa-3 rounded-lg border border-solid" style="background-color: #fffbf5;">
-                                <MudText Typo="Typo.caption" Class="text-muted">Costos de Reparación</MudText>
+                                <MudText Typo="Typo.subtitle2">Costos de Reparación</MudText>
                                 <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #b7791f;">@string.Format("{0:C0}", _totalGastos)</MudText>
                             </div>
                         </MudItem>
                     </MudGrid>
 
                     <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5;">
-                        <MudText Typo="Typo.caption" Class="text-muted">Total Invertido</MudText>
+                        <MudText Typo="Typo.subtitle2">Total Invertido</MudText>
                         <MudText Typo="Typo.h5" Class="font-weight-bold" Color="Color.Error">@string.Format("{0:C0}", _totalInvertido)</MudText>
                     </div>
 
-                    <div class="d-flex justify-between py-2 border-bottom">
-                        <MudText Typo="Typo.body2" Class="text-muted">Precio Mínimo</MudText>
-                        <MudText Typo="Typo.body2" Class="font-weight-bold">@string.Format("{0:C2}", _precioMinimo)</MudText>
-                    </div>
+                    <MudStack Row="true" Class="py-2 border-bottom">
+                        <MudText Typo="Typo.h6">Precio Mínimo: </MudText>
+                        <MudText Typo="Typo.h6" Class="font-weight-bold text-muted">@string.Format("{0:C2}", _precioMinimo)</MudText>
+                    </MudStack>
 
-                    <div class="pa-4 rounded-lg my-4 d-flex justify-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="pa-4 rounded-lg my-4 d-flex justify-space-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
                         <div>
-                            <MudText Typo="Typo.caption" Style="color: #166534;">Precio Ideal (@(_vehiculo.MargenGanancia)% Margen de Ganancia)</MudText>
+                            <MudText Typo="Typo.body2" Style="color: #166534;">Precio Ideal (@(_vehiculo.MargenGanancia)% Margen de Ganancia)</MudText>
                             <MudText Typo="Typo.h5" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _precioIdeal)</MudText>
                         </div>
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Style="color: #15803d;" />
                     </div>
 
-                    <div class="d-flex justify-between py-1">
-                        <MudText Typo="Typo.body2" Class="text-muted">Ganancia Estimada</MudText>
-                        <MudText Typo="Typo.body2" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _gananciaEstimada)</MudText>
-                    </div>
-                    <div class="d-flex justify-between py-1">
-                        <MudText Typo="Typo.body2" Class="text-muted">ROI</MudText>
-                        <MudText Typo="Typo.body2" Class="font-weight-bold">@string.Format("{0:F1}%", _vehiculo.MargenGanancia)</MudText>
-                    </div>
+                    <MudStack Row="true">
+                        <MudText Typo="Typo.h6" >Ganancia Estimada: </MudText>
+                        <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _gananciaEstimada)</MudText>
+                    </MudStack>
                 </MudPaper>
             </MudItem>
         </MudGrid>
@@ -221,7 +217,7 @@
     @code {
     [Parameter] public int Id { get; set; }
 
-    private Vehiculos _vehiculo; 
+    private Vehiculos _vehiculo;
     private List<string> _listaFotos = new();
     private List<string> _listaDesperfectos = new();
     private List<GastosVehiculo> _listaGastos = new();
@@ -321,6 +317,32 @@
 
     private async Task EliminarVehiculo()
     {
-        
+        var parameters = new DialogParameters
+        {
+            { "CuerpoMensaje", "Esta seguro que desea eliminar este vehiculo: " },
+            { "InformacionResaltada", _vehiculo.Marca},
+            { "OnConfirm", new Func<Task<(bool Exito, string Mensaje)>>(() => dataconex.SoftDeleteVehiculo(Id)) }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            BackdropClick = false,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(
+            string.Empty,
+            parameters,
+            options
+        );
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            VolverAlGrid();
+        }
     }
 }
