@@ -214,7 +214,7 @@
     }
 </MudContainer>
 
-@code {
+    @code {
     [Parameter] public int Id { get; set; }
 
     private Vehiculos _vehiculo;
@@ -317,6 +317,32 @@
 
     private async Task EliminarVehiculo()
     {
-        
+        var parameters = new DialogParameters
+        {
+            { "CuerpoMensaje", "Esta seguro que desea eliminar este vehiculo: " },
+            { "InformacionResaltada", _vehiculo.Marca},
+            { "OnConfirm", new Func<Task<(bool Exito, string Mensaje)>>(() => dataconex.SoftDeleteVehiculo(Id)) }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            BackdropClick = false,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(
+            string.Empty,
+            parameters,
+            options
+        );
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            VolverAlGrid();
+        }
     }
 }
