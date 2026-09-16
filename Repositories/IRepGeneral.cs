@@ -17,5 +17,6 @@ namespace Dealer.Repositories
         Task<IEnumerable<GastosVehiculo>> ObtenerGastosVehiculo(int idVehiculo);
         Task<Vehiculos> ObtenerVehiculoPorId(int id);
         Task<IEnumerable<Vehiculos>> ObtenerVehiculos();
+        Task<(bool Exito, string Mensaje)> SoftDeleteVehiculo(int id);
     }
 }
