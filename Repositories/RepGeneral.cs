@@ -194,7 +194,7 @@ namespace Dealer.Repositories
                 parametros.Add("@Id", id);
 
                 await conexion.ExecuteAsync(
-                    "usp_SoftDelete",
+                    "usp_SoftDeleteVehiculo",
                     parametros,
                     commandType: CommandType.StoredProcedure
                 );
