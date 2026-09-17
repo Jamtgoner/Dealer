@@ -33,7 +33,7 @@
     {
         <MudGrid Spacing="3">
             <MudItem xs="12" md="8">
-                <MudPaper Elevation="0" Class="carousel-container d-flex align-center justify-center rounded-lg overflow-hidden mb-4" Style="background-color: #d2dbe5; height: 450px;">
+                <MudPaper Elevation="0" Class="carousel-container d-flex align-center justify-center rounded-lg overflow-hidden mb-4" Style="background-color: #d2dbe5; height: 550px;">
                     @if (_listaFotos != null && _listaFotos.Any())
                     {
                         <MudCarousel TData="string" AutoCycle="false" ShowArrows="true" ShowBullets="true" Class="mud-width-full h-100">
@@ -165,7 +165,7 @@
             </MudItem>
 
             <MudItem xs="12" md="4">
-                <MudPaper Class="pa-6 rounded-lg sticky-sidebar" Elevation="1">
+                <MudPaper Class="pa-6 rounded-lg sticky-sidebar shadow-sm " Elevation="1">
                     <div class="d-flex align-center gap-2 mb-4">
                         <MudIcon Icon="@Icons.Material.Filled.Calculate" />
                         <MudText Typo="Typo.h6" Class="font-weight-bold">Calculadora de Precio</MudText>
@@ -173,30 +173,32 @@
 
                     <MudGrid Spacing="2" Class="mb-3">
                         <MudItem xs="6">
-                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #f8faff;">
+                            <div class="pa-3 rounded-lg" style="background-color: #f8faff; border: 1px solid #bfd1fe;">
                                 <MudText Typo="Typo.subtitle2">Costo de Compra</MudText>
-                                <MudText Typo="Typo.h6" Class="font-weight-bold" Color="Color.Primary">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
+                                <MudText Typo="Typo.h6" Class="font-weight-bold" Color="Color.Primary">
+                                    @string.Format("{0:C0}", _vehiculo.PrecioCompra)
+                                </MudText>
                             </div>
                         </MudItem>
                         <MudItem xs="6">
-                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #fffbf5;">
+                            <div class="pa-3 rounded-lg" style="background-color: #fffbf5; border: 1px solid #fdc074;">
                                 <MudText Typo="Typo.subtitle2">Costos de Reparación</MudText>
                                 <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #b7791f;">@string.Format("{0:C0}", _totalGastos)</MudText>
                             </div>
                         </MudItem>
                     </MudGrid>
 
-                    <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5;">
+                    <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5; border: 1px solid #ffc6c6;">
                         <MudText Typo="Typo.subtitle2">Total Invertido</MudText>
                         <MudText Typo="Typo.h5" Class="font-weight-bold" Color="Color.Error">@string.Format("{0:C0}", _totalInvertido)</MudText>
                     </div>
 
-                    <MudStack Row="true" Class="py-2 border-bottom">
+                    <MudStack Row="true" Class="py-2 border-top">
                         <MudText Typo="Typo.h6">Precio Mínimo: </MudText>
                         <MudText Typo="Typo.h6" Class="font-weight-bold text-muted">@string.Format("{0:C2}", _precioMinimo)</MudText>
                     </MudStack>
 
-                    <div class="pa-4 rounded-lg my-4 d-flex justify-space-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="pa-4 rounded-lg my-2 d-flex justify-space-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
                         <div>
                             <MudText Typo="Typo.body2" Style="color: #166534;">Precio Ideal (@(_vehiculo.MargenGanancia)% Margen de Ganancia)</MudText>
                             <MudText Typo="Typo.h5" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _precioIdeal)</MudText>
