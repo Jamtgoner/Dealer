@@ -2,7 +2,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #fff !important;
+    background-color: #f8fafc !important;
 }
 
 h1:focus {
@@ -53,7 +53,7 @@ h1:focus {
 }
 
 .bg-suave {
-    background-color: #F7F9FA !important;
+    background-color: #f8fafc !important;
 }
 
 .bg-suavecito {
@@ -61,7 +61,7 @@ h1:focus {
 }
 
 .bg-oscusuave {
-    background-color: #d2dbe5 !important;
+    background-color: #e8ecf1 !important;
 }
 
 /* Clase para el contenedor del menú */
@@ -127,7 +127,7 @@ h1:focus {
     }
 
 .image-container {
-    background-color: #ebeef3;
+    background-color: #F1F5F9;
     height: 180px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;

@@ -104,7 +104,8 @@
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column style-card" @onclick="() => IrAlPerfil(vehiculo.Id)">
 
-                        <div class="image-container d-flex align-center justify-center pa-4 text-muted">
+                        <!-- Contenedor de la Imagen / Placeholder -->
+                        <div class="image-container d-flex align-center justify-center text-muted">
                             @if (_fotosVehiculos.TryGetValue(vehiculo.Id, out var fotoUrl) && !string.IsNullOrEmpty(fotoUrl))
                             {
                                 <img src="@fotoUrl" alt="@vehiculo.Marca @vehiculo.Modelo" class="vehicle-img" />
