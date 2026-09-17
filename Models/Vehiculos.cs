@@ -19,6 +19,7 @@
         public decimal PrecioCompra { get; set; }
         public string CompradoA { get; set; } = string.Empty;
         public decimal MargenGanancia { get; set; }
+        public decimal Gastos { get; set; }
         public string? Descripcion { get; set; }
         public bool IsDeleted { get; set; }
     }

@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Dealer.Repositories
 {
-    public class RepGeneral(IConfiguration configuration) : IRepGeneral
+    public class RepGeneral(IConfiguration configuration)
     {
         public readonly string? _connectionString = configuration.GetConnectionString("DataConnection");
 
@@ -48,6 +48,27 @@ namespace Dealer.Repositories
             return await conexion.QueryAsync<string>(
                 @"SELECT Descripcion FROM DesperfectosVehiculo WHERE IdVehiculo = @IdVehiculo",
                 new { IdVehiculo = idVehiculo });
+        }
+
+        public async Task<IEnumerable<string>> ObtenerTipoGastos()
+        {
+            using var conexion = new SqlConnection(_connectionString);
+
+            return await conexion.QueryAsync<string>("SELECT Descripcion FROM Parametros WHERE Categoria = 'Gasto' ");
+        }
+
+        public async Task<IEnumerable<string>> ObtenerCombustibles()
+        {
+            using var conexion = new SqlConnection(_connectionString);
+
+            return await conexion.QueryAsync<string>("SELECT Descripcion FROM Parametros WHERE Categoria = 'Combustible' ");
+        }
+
+        public async Task<IEnumerable<string>> ObtenerTransmisiones()
+        {
+            using var conexion = new SqlConnection(_connectionString);
+
+            return await conexion.QueryAsync<string>("SELECT Descripcion FROM Parametros WHERE Categoria = 'Transmision' ");
         }
 
         public async Task<IEnumerable<GastosVehiculo>> ObtenerGastosVehiculo(int idVehiculo)
@@ -125,13 +146,65 @@ namespace Dealer.Repositories
             }
         }
 
+        public async Task<(bool Exito, string Mensaje, int IdGenerado)> AgregarGastoVehiculo(GastosVehiculo gasto)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            try
+            {
+                var id = await conexion.QuerySingleAsync<int>(
+                    "usp_AgregarGastoVehiculo",
+                    new
+                    {
+                        gasto.IdVehiculo,
+                        gasto.Descripcion,
+                        gasto.Tipo,
+                        gasto.Monto,
+                        gasto.Fecha,
+                        gasto.Suplidor
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+                return (true, "Gasto agregado correctamente", id);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error al agregar: {ex.Message}", 0);
+            }
+        }
+
+        public async Task<(bool Exito, string Mensaje)> EditarGastoVehiculo(GastosVehiculo gasto)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            try
+            {
+                var filasAfectadas = await conexion.ExecuteAsync(
+                    "usp_EditarGastoVehiculo",
+                    new
+                    {
+                        gasto.Id,
+                        gasto.Descripcion,
+                        gasto.Tipo,
+                        gasto.Monto,
+                        gasto.Fecha,
+                        gasto.Suplidor
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+                return filasAfectadas > 0 ? (true, "Gasto actualizado correctamente") : (false, "No se actualizó ningún registro.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error al agregar: {ex.Message}");
+            }
+        }
+
         public async Task<(bool Exito, string Mensaje)> EditarVehiculo(Vehiculos vehiculo)
         {
             using var conexion = new SqlConnection(_connectionString);
             try
             {
                 await conexion.ExecuteAsync(
-                    "usp_EditarVehiculo", 
+                    "usp_EditarVehiculo",
                     new
                     {
                         vehiculo.Id,
@@ -194,7 +267,7 @@ namespace Dealer.Repositories
                 parametros.Add("@Id", id);
 
                 await conexion.ExecuteAsync(
-                    "usp_SoftDelete",
+                    "usp_SoftDeleteVehiculo",
                     parametros,
                     commandType: CommandType.StoredProcedure
                 );
@@ -204,6 +277,28 @@ namespace Dealer.Repositories
             catch (Exception ex)
             {
                 return (false, $"No se pudo eliminar el vehiculo: {ex.Message}");
+            }
+        }
+
+        public async Task<(bool Exito, string Mensaje)> DeleteGasto(int id)
+        {
+            try
+            {
+                using var conexion = new SqlConnection(_connectionString);
+                var parametros = new DynamicParameters();
+                parametros.Add("@Id", id);
+
+                await conexion.ExecuteAsync(
+                    "usp_EliminarGasto",
+                    parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return (true, "Gasto eliminado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"No se pudo eliminar el gasto: {ex.Message}");
             }
         }
     }
