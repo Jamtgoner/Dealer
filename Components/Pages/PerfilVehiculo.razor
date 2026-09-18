@@ -1,5 +1,5 @@
 ﻿@page "/vehiculo/{Id:int}"
-@inject IRepGeneral dataconex
+@inject RepGeneral dataconex
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
@@ -9,8 +9,8 @@
         <div class="d-flex align-center gap-2">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="VolverAlGrid" Color="Color.Default" Edge="Edge.Start" />
             <div>
-                <MudText Typo="Typo.h5" Class="font-weight-bold">@_vehiculo?.Marca @_vehiculo?.Modelo @_vehiculo?.Anio</MudText>
-                <MudChip T="string" Color="Color.Warning" Variant="Variant.Text" Size="Size.Small" Class="px-0">@_vehiculo?.Estado</MudChip>
+                <MudText Typo="Typo.h5" Class="fw-bold">@_vehiculo?.Marca @_vehiculo?.Modelo @_vehiculo?.Anio</MudText>
+                <MudChip T="string" Color="Color.Warning" Variant="Variant.Outlined" Size="Size.Small" Class="pa-3 fw-bold">@_vehiculo?.Estado</MudChip>
             </div>
         </div>
         <div class="d-flex gap-2">
@@ -33,7 +33,7 @@
     {
         <MudGrid Spacing="3">
             <MudItem xs="12" md="8">
-                <MudPaper Elevation="0" Class="carousel-container d-flex align-center justify-center rounded-lg overflow-hidden mb-4" Style="background-color: #d2dbe5; height: 450px;">
+                <MudPaper Elevation="0" Class="carousel-container d-flex align-center justify-center rounded-lg overflow-hidden mb-4" Style="background-color: #d2dbe5; height: 550px;">
                     @if (_listaFotos != null && _listaFotos.Any())
                     {
                         <MudCarousel TData="string" AutoCycle="false" ShowArrows="true" ShowBullets="true" Class="mud-width-full h-100">
@@ -116,27 +116,27 @@
                     }
                 </MudPaper>
 
-                <MudPaper Class="pa-6 rounded-lg" Elevation="1">
+                <MudPaper Class="pa-6 rounded-lg mb-2" Elevation="1">
                     <div class="d-flex justify-space-between align-center mb-4">
                         <div>
-                            <MudText Typo="Typo.h6" > Gastos</MudText>
-                            <MudText Typo="Typo.button" >Total: <strong class="text-muted">@string.Format("{0:C0}", _totalGastos)</strong></MudText>
+                            <MudText Typo="Typo.h6"> Gastos</MudText>
+                            <MudText Typo="Typo.button">Total: <strong class="text-muted">@string.Format("{0:C0}", _totalGastos)</strong></MudText>
                         </div>
                         <div class="d-flex gap-2">
                             <MudIconButton Icon="@Icons.Material.Filled.Print" Size="Size.Small" Variant="Variant.Outlined" />
-                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Dark" Size="Size.Small">Agregar Gasto</MudButton>
+                            <MudButton OnClick="@(() => AbrirDialogGasto())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Dark" Size="Size.Small">Agregar Gasto</MudButton>
                         </div>
                     </div>
 
                     @if (_listaGastos != null && _listaGastos.Any())
                     {
-                        <div class="d-flex flex-column gap-3">
+                        <div class="d-flex flex-column gap-2">
                             @foreach (var gasto in _listaGastos)
                             {
-                                <div class="d-flex justify-between align-center pa-3 rounded-lg border border-solid">
+                                <div class="d-flex align-center justify-space-between pa-3 rounded-lg border border-solid">
                                     <div class="d-flex align-center gap-3">
                                         <div class="pa-2 bg-light rounded">
-                                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Class="text-muted" />
+                                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney"/>
                                         </div>
                                         <div>
                                             <div class="d-flex align-center gap-2">
@@ -150,8 +150,13 @@
                                     </div>
                                     <div class="d-flex align-center gap-2">
                                         <MudText Typo="Typo.body1" Class="font-weight-bold">@string.Format("{0:C0}", gasto.Monto)</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => AbrirDialogGasto(gasto))" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                                       Size="Size.Small" 
+                                                       Color="Color.Error" 
+                                                       OnClick="@(() => EliminarGasto(gasto))" />
                                     </div>
                                 </div>
                             }
@@ -165,7 +170,7 @@
             </MudItem>
 
             <MudItem xs="12" md="4">
-                <MudPaper Class="pa-6 rounded-lg sticky-sidebar" Elevation="1">
+                <MudPaper Class="pa-6 rounded-lg sticky-sidebar shadow-sm " Elevation="1">
                     <div class="d-flex align-center gap-2 mb-4">
                         <MudIcon Icon="@Icons.Material.Filled.Calculate" />
                         <MudText Typo="Typo.h6" Class="font-weight-bold">Calculadora de Precio</MudText>
@@ -173,40 +178,46 @@
 
                     <MudGrid Spacing="2" Class="mb-3">
                         <MudItem xs="6">
-                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #f8faff;">
+                            <div class="pa-3 rounded-lg" style="background-color: #f8faff; border: 1px solid #bfd1fe;">
                                 <MudText Typo="Typo.subtitle2">Costo de Compra</MudText>
-                                <MudText Typo="Typo.h6" Class="font-weight-bold" Color="Color.Primary">@string.Format("{0:C0}", _vehiculo.PrecioCompra)</MudText>
+                                <MudText Typo="Typo.h6" Class="fw-bold" Color="Color.Primary">
+                                    @string.Format("{0:C0}", _vehiculo.PrecioCompra)
+                                </MudText>
                             </div>
                         </MudItem>
                         <MudItem xs="6">
-                            <div class="pa-3 rounded-lg border border-solid" style="background-color: #fffbf5;">
+                            <div class="pa-3 rounded-lg" style="background-color: #fffbf5; border: 1px solid #fdc074;">
                                 <MudText Typo="Typo.subtitle2">Costos de Reparación</MudText>
-                                <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #b7791f;">@string.Format("{0:C0}", _totalGastos)</MudText>
+                                <MudText Typo="Typo.h6" Class="fw-bold" Style="color: #b7791f;">
+                                    @string.Format("{0:C0}", _totalGastos)
+                                </MudText>
                             </div>
                         </MudItem>
                     </MudGrid>
 
-                    <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5;">
+                    <div class="pa-4 rounded-lg mb-4 text-center" style="background-color: #fff5f5; border: 1px solid #ffc6c6;">
                         <MudText Typo="Typo.subtitle2">Total Invertido</MudText>
-                        <MudText Typo="Typo.h5" Class="font-weight-bold" Color="Color.Error">@string.Format("{0:C0}", _totalInvertido)</MudText>
+                        <MudText Typo="Typo.h5" Class="fw-bold" Color="Color.Error">
+                            @string.Format("{0:C0}", _totalInvertido)
+                        </MudText>
                     </div>
 
-                    <MudStack Row="true" Class="py-2 border-bottom">
-                        <MudText Typo="Typo.h6">Precio Mínimo: </MudText>
-                        <MudText Typo="Typo.h6" Class="font-weight-bold text-muted">@string.Format("{0:C2}", _precioMinimo)</MudText>
+                    <MudStack Row="true" Class="py-2 border-top" AlignItems="AlignItems.Center">
+                        <MudText Class="fw-bold" Style=" font-size:15px;">Precio Mínimo: </MudText>
+                        <MudText Class="fw-bold text-muted" Style=" font-size:20px;">@string.Format("{0:C2}", _precioMinimo)</MudText>
                     </MudStack>
 
-                    <div class="pa-4 rounded-lg my-4 d-flex justify-space-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="pa-4 rounded-lg my-2 d-flex justify-space-between align-center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
                         <div>
                             <MudText Typo="Typo.body2" Style="color: #166534;">Precio Ideal (@(_vehiculo.MargenGanancia)% Margen de Ganancia)</MudText>
-                            <MudText Typo="Typo.h5" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _precioIdeal)</MudText>
+                            <MudText Typo="Typo.h5" Class="fw-bold" Style="color: #15803d;">@string.Format("{0:C0}", _precioIdeal)</MudText>
                         </div>
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Style="color: #15803d;" />
                     </div>
 
-                    <MudStack Row="true">
-                        <MudText Typo="Typo.h6" >Ganancia Estimada: </MudText>
-                        <MudText Typo="Typo.h6" Class="font-weight-bold" Style="color: #15803d;">@string.Format("{0:C0}", _gananciaEstimada)</MudText>
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudText Class="fw-bold" Style=" font-size:15px;">Ganancia Estimada: </MudText>
+                        <MudText Class="fw-bold" Style="color: #15803d; font-size:20px;">@string.Format("{0:C0}", _gananciaEstimada)</MudText>
                     </MudStack>
                 </MudPaper>
             </MudItem>
@@ -214,7 +225,7 @@
     }
 </MudContainer>
 
-    @code {
+@code {
     [Parameter] public int Id { get; set; }
 
     private Vehiculos _vehiculo;
@@ -312,6 +323,36 @@
         }
     }
 
+    private async Task AbrirDialogGasto(GastosVehiculo gasto = null)
+    {
+        var parametros = new DialogParameters<GastoVehiculoDialog>
+    {
+        { x => x.GastoParam, gasto ?? new GastosVehiculo() },
+        { x => x.IdVehiculo, Id } // ID del vehículo al que pertenece el gasto
+    };
+
+        var opciones = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            BackdropClick = false,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<GastoVehiculoDialog>(
+            gasto == null || gasto.Id == 0 ? "Agregar Gasto" : "Editar Gasto",
+            parametros,
+            opciones
+        );
+
+        var resultado = await dialog.Result;
+
+        if (!resultado.Canceled)
+        {
+            await OnInitializedAsync();
+        }
+    }
+
     private async Task EliminarVehiculo()
     {
         var parameters = new DialogParameters
@@ -340,6 +381,37 @@
         if (!result.Canceled)
         {
             VolverAlGrid();
+        }
+    }
+
+    private async Task EliminarGasto(GastosVehiculo gasto)
+    {
+        var parameters = new DialogParameters
+        {
+            { "CuerpoMensaje", "Esta seguro que desea eliminar este gasto: " },
+            { "InformacionResaltada", gasto.Descripcion},
+            { "OnConfirm", new Func<Task<(bool Exito, string Mensaje)>>(() => dataconex.DeleteGasto(gasto.Id)) }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            BackdropClick = false,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(
+            string.Empty,
+            parameters,
+            options
+        );
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await OnInitializedAsync();
         }
     }
 }

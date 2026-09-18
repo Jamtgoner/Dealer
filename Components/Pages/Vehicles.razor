@@ -1,6 +1,6 @@
 ﻿@page "/"
 @page "/vehiculos"
-@inject IRepGeneral dataconex
+@inject RepGeneral dataconex
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 
@@ -9,59 +9,68 @@
 <MudContainer MaxWidth="MaxWidth.False" Class="flex-none bg-suave">
     <MudPaper Elevation="3" Class="px-6 py-4 my-3">
 
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-5">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
             <MudStack Spacing="0">
                 <MudText Typo="Typo.h5" Class="fw-bold">Vehiculos</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Primary">Gestiona el inventario de tus productos</MudText>
-            </MudStack>
-
-            <MudStack Row="true" Spacing="3">
-                @* Total *@
-                <MudPaper Elevation="0" Class="pa-2 rounded-lg d-flex align-center" Style="background-color: #f0f7ff; border: 1px solid #e0eaff;">
-                    <MudIcon Icon="@Icons.Material.Filled.Warehouse" Color="Color.Info" Size="Size.Small" Class="mx-2" />
-                    <div class="mr-3">
-                        <MudText Style="font-size: 0.7rem; color: #5c708a; line-height: 1;">Total Productos</MudText>
-                        <MudText Typo="Typo.h6" Class="fw-bold">PV55</MudText>
-                    </div>
-                </MudPaper>
-
-                @* Inventariados *@
-                <MudPaper Elevation="0" Class="pa-2 rounded-lg d-flex align-center" Style="background-color: #f0fbf2; border: 1px solid #e0f5e5;">
-                    <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Success" Size="Size.Small" Class="mx-2" />
-                    <div class="mr-3">
-                        <MudText Style="font-size: 0.7rem; color: #437a50; line-height: 1;">Inventariados</MudText>
-                        <MudText Typo="Typo.h6" Class="fw-bold">PV55</MudText>
-                    </div>
-                </MudPaper>
-
-                @* Stock Bajo *@
-                <MudPaper Elevation="0" Class="pa-2 rounded-lg d-flex align-center" Style="background-color: #fff5f5; border: 1px solid #ffe0e0;">
-                    <MudIcon Icon="@Icons.Material.Filled.ReportProblem" Color="Color.Error" Size="Size.Small" Class="mx-2" />
-                    <div class="mr-3">
-                        <MudText Style="font-size: 0.7rem; color: #a34a4a; line-height: 1;">Stock Bajo</MudText>
-                        <MudText Typo="Typo.h6" Class="fw-bold">PV55</MudText>
-                    </div>
-                </MudPaper>
+                <MudText Typo="Typo.body2" Color="Color.Primary">Cantidad de vehiculos: @totalVehiculos </MudText>
             </MudStack>
         </MudStack>
 
         <MudDivider Class="my-3" />
 
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
 
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <!-- Búsqueda por Texto -->
                 <MudTextField @bind-Value="busqueda"
-                              Placeholder="Buscar por marca, modelo..."
+                              Placeholder="Buscar por marca y modelo"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Search"
                               Immediate="true"
                               Variant="Variant.Outlined"
                               Margin="Margin.Dense"
-                              Style="width:300px; background: white;" />
+                              Style="width:280px; background: white;" />
+
+                <!-- Filtro: Combustible -->
+                <MudSelect T="string"
+                           MultiSelection="true"
+                           SelectAll="true"
+                           SelectAllText="Seleccionar todos"
+                           Placeholder="Seleccionar combustible"
+                           @bind-SelectedValues="_combustiblesSeleccionados"
+                           MultiSelectionTextFunc="MensajeCombustibles"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Clearable="true"
+                           Style="width:250px; background: white;">
+                    @foreach (var c in _listaCombustibles)
+                    {
+                        <MudSelectItem T="string" Value="@c">@c</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <!-- Filtro: Transmisión -->
+                <MudSelect T="string"
+                           MultiSelection="true"
+                           SelectAll="true"
+                           SelectAllText="Seleccionar todos"
+                           Placeholder="Seleccionar transmisión"
+                           @bind-SelectedValues="_transmisionesSeleccionadas"
+                           MultiSelectionTextFunc="MensajeTransmisiones"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Clearable="true"
+                           Style="width:250px; background: white;">
+                    @foreach (var t in _listaTransmisiones)
+                    {
+                        <MudSelectItem T="string" Value="@t">@t</MudSelectItem>
+                    }
+                </MudSelect>
             </MudStack>
 
+            <!-- Botón Nuevo Vehículo -->
             <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
+                       Color="Color.Dark"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="NuevoVehiculo"
                        Size="Size.Medium"
@@ -74,23 +83,21 @@
 </MudContainer>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-6 bg-suave flex-grow-1 overflow-auto">
+
     @if (VehiculosFiltrados == null)
     {
-        <!-- Estado de carga mientras se obtienen los datos -->
         <MudGrid Justify="Justify.Center" Class="align-center" Style="height: 200px;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
         </MudGrid>
     }
     else if (!VehiculosFiltrados.Any())
     {
-        <!-- Mensaje si no hay registros -->
         <MudText Typo="Typo.h6" Align="Align.Center" Class="text-muted pa-4">
             No se encontraron vehículos registrados.
         </MudText>
     }
     else
     {
-        <!-- Grid responsivo: 1 columna en móvil, 2 en tablet, 4 en pantallas grandes -->
         <MudGrid Spacing="4">
             @foreach (var vehiculo in VehiculosFiltrados)
             {
@@ -109,13 +116,11 @@
                             }
                         </div>
 
-                        <!-- Información de la Tarjeta -->
                         <MudCardContent Class="pa-4 flex-grow-1 d-flex flex-column justify-space-between">
 
-                            <!-- Fila Superior: Marca, Modelo y Estado -->
                             <div class="d-flex justify-space-between align-start">
                                 <div>
-                                    <MudText Typo="Typo.subtitle1" Class="font-weight-bold text-uppercase" Color="Color.Default">
+                                    <MudText Typo="Typo.subtitle1" Class="fw-bold text-uppercase" Color="Color.Default">
                                         @vehiculo.Marca @vehiculo.Modelo
                                     </MudText>
                                     <MudText Typo="Typo.caption" Class="text-muted text-uppercase">
@@ -127,7 +132,6 @@
                                 </MudChip>
                             </div>
 
-                            <!-- Fila del Precio Principal y Millaje -->
                             <div class="d-flex justify-space-between align-end mt-4">
                                 <MudText Typo="Typo.h6" Class="font-weight-bold" Style="font-size: 1.25rem;">
                                     @vehiculo.PrecioCompra.ToString("C0")
@@ -137,15 +141,13 @@
                                 </MudText>
                             </div>
 
-                            <!-- Bloque de Gastos / Margen / Sugeridos y Fecha -->
                             <div class="mt-2 pt-2 border-top-dash">
                                 <div class="d-flex align-center gap-1">
                                     <MudText Typo="Typo.caption" Class="text-muted">Gastos:</MudText>
-                                    <MudText Typo="Typo.caption" Class="font-weight-bold text-warning">@vehiculo.MargenGanancia.ToString("C0")</MudText>
+                                    <MudText Typo="Typo.caption" Class="fw-bold" Style="color: #D9772E;">@vehiculo.Gastos.ToString("C0")</MudText>
                                 </div>
 
                                 <div class="d-flex justify-space-between align-center mt-1">
-                                    <!-- Cálculo de precio sugerido simulado según diseño (PrecioCompra + Margen) -->
                                     <div class="d-flex align-center gap-1 text-success">
                                         <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Small" Style="font-size: 1rem;" />
                                         <MudText Typo="Typo.caption" Class="font-weight-bold">
@@ -154,7 +156,6 @@
                                         <MudText Typo="Typo.caption" Class="text-muted text-lowercase">sugerido</MudText>
                                     </div>
 
-                                    <!-- Fecha de Compra abajo a la derecha -->
                                     <MudText Typo="Typo.caption" Class="text-muted font-size-xs">
                                         @vehiculo.FechaCompra.ToString("MM/dd/yyyy")
                                     </MudText>
@@ -170,32 +171,67 @@
 </MudContainer>
 
 
-    @code {
+@code {
     private List<Vehiculos> _fullVehiculos = new();
     private Dictionary<int, string> _fotosVehiculos = new();
     private string busqueda = string.Empty;
 
+    // Listas para poblar los select
+    private IEnumerable<string> _listaCombustibles = [];
+    private IEnumerable<string> _listaTransmisiones = [];
+
+    // Filtros seleccionados
+    private IReadOnlyCollection<string> _combustiblesSeleccionados = Array.Empty<string>();
+    private IReadOnlyCollection<string> _transmisionesSeleccionadas = Array.Empty<string>();
+
+    private int totalVehiculos => _fullVehiculos.Count();
+
     protected override async Task OnInitializedAsync()
     {
+        await CargarFiltros();
         await CargarDatos();
     }
 
+    private async Task CargarFiltros()
+    {
+        _listaCombustibles = await dataconex.ObtenerCombustibles();
+        _listaTransmisiones = await dataconex.ObtenerTransmisiones();
+    }
+
+    // Cambiar List<string> por IReadOnlyList<string>
+    private string MensajeCombustibles(IReadOnlyList<string> selectedValues)
+    {
+        if (selectedValues == null || selectedValues.Count == 0) return null;
+        return $"{selectedValues.Count} combustible{(selectedValues.Count > 1 ? "s" : "")}";
+    }
+
+    private string MensajeTransmisiones(IReadOnlyList<string> selectedValues)
+    {
+        if (selectedValues == null || selectedValues.Count == 0) return null;
+        return $"{selectedValues.Count} transmisión{(selectedValues.Count > 1 ? "es" : "")}";
+    }
+
+    // Lógica de filtrado dinámico
     private IEnumerable<Vehiculos> VehiculosFiltrados => _fullVehiculos
-    .Where(v => string.IsNullOrWhiteSpace(busqueda) ||
-        (v.Marca?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-        (v.Modelo?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-        (v.Anio.ToString().Contains(busqueda)) ||
-        (v.Color?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-        (v.Vin?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-        (v.Placa?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false));
+        .Where(v =>
+            (string.IsNullOrWhiteSpace(busqueda) ||
+             (v.Marca?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (v.Modelo?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (v.Anio.ToString().Contains(busqueda)) ||
+             (v.Color?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (v.Vin?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (v.Placa?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+            (!_combustiblesSeleccionados.Any() ||
+             _combustiblesSeleccionados.Contains(v.Combustible, StringComparer.OrdinalIgnoreCase)) &&
+            (!_transmisionesSeleccionadas.Any() ||
+             _transmisionesSeleccionadas.Contains(v.Transmision, StringComparer.OrdinalIgnoreCase))
+        );
 
     private async Task CargarDatos()
     {
-        // 1. Obtener la data de los vehículos
         var data = await dataconex.ObtenerVehiculos();
         _fullVehiculos = data.ToList();
 
-        // 2. Obtener las fotos utilizando tu método específico en paralelo
         var tareasFotos = _fullVehiculos.Select(async v =>
         {
             try

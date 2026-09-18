@@ -9,7 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddMudServices();
 
-builder.Services.AddTransient<IRepGeneral, RepGeneral>();
+builder.Services.AddScoped<RepGeneral>();
 
 var app = builder.Build();
 
