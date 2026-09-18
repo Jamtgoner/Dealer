@@ -1,5 +1,6 @@
 using Dealer.Components;
 using Dealer.Repositories;
+using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomEnd;
+    config.SnackbarConfiguration.VisibleStateDuration = 1000;
+});
 
 builder.Services.AddScoped<RepGeneral>();
 

@@ -463,16 +463,11 @@
                         await dataconex.GuardarRutaArchivo(idGenerado, urlRelativa, "Documentos");
                     }
                 }
-
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
-                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add("Vehículo registrado con éxito", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
             else
             {
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
-                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add(mensaje, Severity.Error);
             }
         }
@@ -582,15 +577,11 @@
                     _documentosCargados.Clear(); // Limpiamos la lista temporal de subidas
                 }
 
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
-                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add("Cambios guardados con éxito", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
             else
             {
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
-                Snackbar.Configuration.VisibleStateDuration = 1500;
                 Snackbar.Add(mensaje, Severity.Error);
             }
         }
