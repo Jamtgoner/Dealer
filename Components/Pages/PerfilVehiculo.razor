@@ -136,7 +136,7 @@
                                 <div class="d-flex align-center justify-space-between pa-3 rounded-lg border border-solid">
                                     <div class="d-flex align-center gap-3">
                                         <div class="pa-2 bg-light rounded">
-                                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney"/>
+                                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" />
                                         </div>
                                         <div>
                                             <div class="d-flex align-center gap-2">
@@ -153,9 +153,9 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                                        Size="Size.Small"
                                                        OnClick="@(() => AbrirDialogGasto(gasto))" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                                       Size="Size.Small" 
-                                                       Color="Color.Error" 
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
                                                        OnClick="@(() => EliminarGasto(gasto))" />
                                     </div>
                                 </div>
@@ -401,11 +401,7 @@
             FullWidth = true
         };
 
-        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(
-            string.Empty,
-            parameters,
-            options
-        );
+        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(string.Empty, parameters, options);
 
         var result = await dialog.Result;
 
