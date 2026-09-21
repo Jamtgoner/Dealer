@@ -49,6 +49,8 @@ nuget.config.user
 # ── Blazor WASM / Web assets ─────────────
 wwwroot/_framework/
 wwwroot/service-worker-assets.js
+/wwwroot/vehiculos/
+/wwwroot/documentosVehiculos/
 **/wwwroot/css/bootstrap/
 
 # ── Entity Framework / Migraciones ───────

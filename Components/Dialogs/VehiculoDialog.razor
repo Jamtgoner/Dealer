@@ -8,198 +8,544 @@
             @(VehiculoParam?.Id == 0 ? "Agregar Vehículo" : "Editar Vehículo")
         </MudText>
     </TitleContent>
-    <DialogContent>
-        <MudForm @ref="_form" @bind-IsValid="_formIsValid">
-            <MudGrid Spacing="4">
-                <!-- Fila 1: Marca, Modelo, Año, Color -->
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Marca" Label="Marca *" Required="true" RequiredError="La marca es requerida" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Modelo" Label="Modelo *" Required="true" RequiredError="El modelo es requerido" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudNumericField @bind-Value="_vehiculo.Anio" Label="Año *" Required="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
+<DialogContent>
+    <MudForm @ref="_form" @bind-IsValid="_formIsValid">
 
-                <!-- Fila 2: VIN, Placa, Millaje, Llaves -->
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Vin" Label="VIN" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Placa" Label="Número de Placa" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudNumericField @bind-Value="_vehiculo.Millaje" Label="Millaje" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudNumericField @bind-Value="_vehiculo.Llaves" Label="Cant. de Llaves" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
+        <MudGrid Spacing="4">
 
-                <!-- Fila 3: Combustible, Transmisión, Estado, Ubicación -->
-                <MudItem xs="12" sm="3">
-                    <MudSelect @bind-Value="_vehiculo.Combustible" Label="Tipo de Combustible" Variant="Variant.Outlined" Margin="Margin.Dense">
-                        <MudSelectItem Value="@("Gasolina")">Gasolina</MudSelectItem>
-                        <MudSelectItem Value="@("Gasoil / Diésel")">Gasoil / Diésel</MudSelectItem>
-                        <MudSelectItem Value="@("Híbrido")">Híbrido</MudSelectItem>
-                        <MudSelectItem Value="@("Eléctrico")">Eléctrico</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudSelect @bind-Value="_vehiculo.Transmision" Label="Transmisión" Variant="Variant.Outlined" Margin="Margin.Dense">
-                        <MudSelectItem Value="@("Automática")">Automática</MudSelectItem>
-                        <MudSelectItem Value="@("Mecánica")">Mecánica</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudSelect @bind-Value="_vehiculo.Estado" Label="Estado" Variant="Variant.Outlined" Margin="Margin.Dense">
-                        <MudSelectItem Value="@("Disponible")">Disponible</MudSelectItem>
-                        <MudSelectItem Value="@("En Reparación")">En Reparación</MudSelectItem>
-                        <MudSelectItem Value="@("Vendido")">Vendido</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.Ubicacion" Label="Ubicación" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
+            <!-- ========================================================= -->
+            <!-- Fila 1: Marca, Modelo, Año, Color -->
+            <!-- ========================================================= -->
 
-                <MudItem xs="12">
-                    <MudText Typo="Typo.caption" Class="font-weight-bold text-muted text-uppercase">Precio de Compra</MudText>
-                </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Marca
+                </MudText>
 
-                <!-- Fila 4: Fecha Compra, Precio Compra, Comprado A, Margen Ganancia -->
-                <MudItem xs="12" sm="3">
-                    <MudDatePicker @bind-Date="_fechaCompraNullable" Label="Fecha de Compra" Editable="true" Placeholder="mm/dd/aaaa" DateFormat="MM/dd/yyyy" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudNumericField @bind-Value="_vehiculo.PrecioCompra" Culture="@_enUS" Label="Precio de Compra" Variant="Variant.Outlined" Margin="Margin.Dense" Format="N2" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <MudTextField @bind-Value="_vehiculo.CompradoA" Label="Comprado a" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" sm="3">
-                    <!-- Mapeamos MargenGanancia directamente a float/decimal; la vista maneja el formato -->
-                    <MudNumericField @bind-Value="_vehiculo.MargenGanancia" Label="Margen de Ganancia (%)" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
+                <MudTextField @bind-Value="_vehiculo.Marca"
+                              Required="true"
+                              RequiredError="La marca es requerida"
+                              Placeholder="Ej: Toyota"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
 
-                <!-- Descripción -->
-                <MudItem xs="12">
-                    <MudTextField @bind-Value="_vehiculo.Descripcion" Label="Descripción" Lines="3" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Modelo
+                </MudText>
 
-                <!-- Sección Desperfectos -->
-                <MudItem xs="12" Class="mt-2">
-                    <div class="d-flex align-center gap-1 mb-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" />
-                        <MudText Typo="Typo.subtitle2" Class="font-weight-bold">Desperfectos</MudText>
+                <MudTextField @bind-Value="_vehiculo.Modelo"
+                              Required="true"
+                              RequiredError="El modelo es requerido"
+                              Placeholder="Ej: Corolla"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Año
+                </MudText>
+
+                <MudNumericField @bind-Value="_vehiculo.Anio"
+                                 Required="true"
+                                 RequiredError="El año es requerido"
+                                 Placeholder="Ej: 2024"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Color
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.Color"
+                              Placeholder="Ej: Blanco"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Fila 2: VIN, Placa, Millaje, Llaves -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted  mb-1">
+                    VIN
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.Vin"
+                              Placeholder="Número de identificación"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Número de Placa
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.Placa"
+                              Placeholder="Ej: A123456"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Millaje
+                </MudText>
+
+                <MudNumericField @bind-Value="_vehiculo.Millaje"
+                                 Placeholder="Ej: 85000"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Cantidad de Llaves
+                </MudText>
+
+                <MudNumericField @bind-Value="_vehiculo.Llaves"
+                                 Placeholder="Ej: 2"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Fila 3: Combustible, Transmisión, Estado, Ubicación -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Tipo de Combustible
+                </MudText>
+
+                <MudSelect @bind-Value="_vehiculo.Combustible"
+                           Placeholder="Seleccione combustible"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense">
+
+                    <MudSelectItem Value="@("Gasolina")">
+                        Gasolina
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("Gasoil / Diésel")">
+                        Gasoil / Diésel
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("Híbrido")">
+                        Híbrido
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("Eléctrico")">
+                        Eléctrico
+                    </MudSelectItem>
+
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Transmisión
+                </MudText>
+
+                <MudSelect @bind-Value="_vehiculo.Transmision"
+                           Placeholder="Seleccione transmisión"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense">
+
+                    <MudSelectItem Value="@("Automática")">
+                        Automática
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("Mecánica")">
+                        Mecánica
+                    </MudSelectItem>
+
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Estado
+                </MudText>
+
+                <MudSelect @bind-Value="_vehiculo.Estado"
+                           Placeholder="Seleccione estado"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense">
+
+                    <MudSelectItem Value="@("Disponible")">
+                        Disponible
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("En Reparación")">
+                        En Reparación
+                    </MudSelectItem>
+
+                    <MudSelectItem Value="@("Vendido")">
+                        Vendido
+                    </MudSelectItem>
+
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Ubicación
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.Ubicacion"
+                              Placeholder="Ej: Patio principal"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Sección: Precio de Compra -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12">
+                <MudText Typo="Typo.caption"
+                         Class="font-weight-bold text-muted text-uppercase">
+                    Precio de Compra
+                </MudText>
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Fila 4: Fecha Compra, Precio Compra, Comprado A, Margen -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Fecha de Compra
+                </MudText>
+
+                <MudDatePicker @bind-Date="_fechaCompraNullable"
+                               Editable="true"
+                               Placeholder="mm/dd/aaaa"
+                               DateFormat="MM/dd/yyyy"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Precio de Compra
+                </MudText>
+
+                <MudNumericField @bind-Value="_vehiculo.PrecioCompra"
+                                 Culture="@_enUS"
+                                 Placeholder="Ej: 25000.00"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense"
+                                 Format="N2" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Comprado a
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.CompradoA"
+                              Placeholder="Persona o empresa"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Margen de Ganancia (%)
+                </MudText>
+
+                <MudNumericField @bind-Value="_vehiculo.MargenGanancia"
+                                 Placeholder="Ej: 15"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Descripción -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12">
+                <MudText Class="fw-bold text-muted mb-1">
+                    Descripción
+                </MudText>
+
+                <MudTextField @bind-Value="_vehiculo.Descripcion"
+                              Placeholder="Información adicional del vehículo"
+                              Lines="3"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Sección: Desperfectos -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" Class="mt-2">
+
+                <div class="d-flex align-center gap-1 mb-1">
+
+                    <MudIcon Icon="@Icons.Material.Filled.Warning"
+                             Color="Color.Warning"
+                             Size="Size.Small" />
+
+                    <MudText Typo="Typo.subtitle2"
+                             Class="font-weight-bold">
+                        Desperfectos
+                    </MudText>
+
+                </div>
+
+                <MudText Class="fw-bold text-muted mb-1">
+                    Descripción del desperfecto
+                </MudText>
+
+                <div class="d-flex gap-2 align-center">
+
+                    <MudTextField @bind-Value="_nuevoDesperfecto"
+                                  Placeholder="Ej: Golpe en puerta izquierda..."
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Clearable="true" />
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Default"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="AgregarListaDesperfecto"
+                               Class="text-capitalize py-2">
+
+                        Agregar
+
+                    </MudButton>
+
+                </div>
+
+
+                <!-- Chips de desperfectos agregados temporalmente -->
+                @if (_listaDesperfectos.Any())
+                {
+                    <div class="d-flex flex-wrap gap-1 mt-2">
+
+                        @foreach (var desp in _listaDesperfectos)
+                        {
+                            <MudChip T="string"
+                                     OnClose="(() => RemoverDesperfecto(desp))"
+                                     Color="Color.Warning"
+                                     Variant="Variant.Text">
+
+                                @desp
+
+                            </MudChip>
+                        }
+
                     </div>
-                    <div class="d-flex gap-2 align-center">
-                        <MudTextField @bind-Value="_nuevoDesperfecto" Placeholder="Ej: Golpe en puerta izquierda..." Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                        <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" OnClick="AgregarListaDesperfecto" Class="text-capitalize py-2">Agregar</MudButton>
+                }
+
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Fotos -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" sm="6" Class="mt-2">
+
+                <MudText Typo="Typo.subtitle2"
+                         Class="font-weight-bold mb-1">
+                    Fotos
+                </MudText>
+
+                <div class="d-flex flex-column gap-2">
+
+                    <div class="d-flex align-center gap-3">
+
+                        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                                       FilesChanged="SubirFotosTemporales"
+                                       Accept=".jpg,.jpeg,.png"
+                                       Multiple>
+
+                            <CustomContent>
+
+                                <MudButton Variant="Variant.Outlined"
+                                           Color="Color.Default"
+                                           OnClick="@context.OpenFilePickerAsync"
+                                           Class="upload-box d-flex flex-column">
+
+                                    <MudIcon Icon="@Icons.Material.Outlined.FileUpload"
+                                             Size="Size.Medium"
+                                             Class="mb-1" />
+
+                                    <span style="font-size: 0.75rem;">
+                                        Subir
+                                    </span>
+
+                                </MudButton>
+
+                            </CustomContent>
+
+                            <SelectedTemplate />
+
+                        </MudFileUpload>
+
+                        <MudText Typo="Typo.caption"
+                                 Class="text-muted">
+
+                            @_fotosNombres
+
+                        </MudText>
+
                     </div>
 
-                    <!-- Chips de desperfectos agregados temporalmente -->
-                    @if (_listaDesperfectos.Any())
+
+                    @if (_fotosCargadas.Any())
                     {
-                        <div class="d-flex flex-wrap gap-1 mt-2">
-                            @foreach (var desp in _listaDesperfectos)
-                            {
-                                <MudChip T="string" OnClose="(() => RemoverDesperfecto(desp))" Color="Color.Warning" Variant="Variant.Text">@desp</MudChip>
-                            }
-                        </div>
+                        @foreach (var foto in _fotosCargadas)
+                        {
+                            <MudChip T="string"
+                                     OnClose="(() => RemoverFotoTemporal(foto))"
+                                     Color="Color.Default"
+                                     Variant="Variant.Filled"
+                                     Size="Size.Small"
+                                     Class="rounded-pill">
+
+                                @RecortarNombreArchivo(foto.Name) (Nuevo)
+
+                            </MudChip>
+                        }
                     }
-                </MudItem>
 
-                <!-- Fotos y Documentos laterales -->
-                <MudItem xs="12" sm="6" Class="mt-2">
-                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold mb-1">Fotos</MudText>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="d-flex align-center gap-3">
-                            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="SubirFotosTemporales" Accept=".jpg,.jpeg,.png" Multiple>
-                                <CustomContent>
-                                    <MudButton Variant="Variant.Outlined"
-                                               Color="Color.Default"
-                                               OnClick="@context.OpenFilePickerAsync"
-                                               Class="upload-box d-flex flex-column">
-                                        <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Size="Size.Medium" Class="mb-1" />
-                                        <span style="font-size: 0.75rem;">Subir</span>
-                                    </MudButton>
-                                </CustomContent>
-                                <SelectedTemplate />
-                            </MudFileUpload>
 
-                            <MudText Typo="Typo.caption" Class="text-muted">@_fotosNombres</MudText>
-                        </div>
-
-                        @if (_fotosCargadas.Any())
+                    @if (_fotosExistentesBD.Any())
+                    {
+                        @foreach (var fotoUrl in _fotosExistentesBD)
                         {
-                            @foreach (var foto in _fotosCargadas)
-                            {
-                                <MudChip T="string" OnClose="(() => RemoverFotoTemporal(foto))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
-                                    @RecortarNombreArchivo(foto.Name) (Nuevo)
-                                </MudChip>
-                            }
-                        }
+                            <MudChip T="string"
+                                     OnClose="(() => RemoverFotoExistente(fotoUrl))"
+                                     Color="Color.Info"
+                                     Variant="Variant.Outlined"
+                                     Size="Size.Small"
+                                     Class="rounded-pill">
 
-                        @if (_fotosExistentesBD.Any())
-                        {
-                            @foreach (var fotoUrl in _fotosExistentesBD)
-                            {
-                                <MudChip T="string" OnClose="(() => RemoverFotoExistente(fotoUrl))" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small" Class="rounded-pill">
-                                    @RecortarNombreArchivo(Path.GetFileName(fotoUrl))
-                                </MudChip>
-                            }
+                                @RecortarNombreArchivo(Path.GetFileName(fotoUrl))
+
+                            </MudChip>
                         }
+                    }
+
+                </div>
+
+            </MudItem>
+
+
+            <!-- ========================================================= -->
+            <!-- Documentos -->
+            <!-- ========================================================= -->
+
+            <MudItem xs="12" sm="6" Class="mt-2">
+
+                <MudText Typo="Typo.subtitle2"
+                         Class="font-weight-bold mb-1">
+                    Documentos
+                </MudText>
+
+                <div class="d-flex flex-column gap-2">
+
+                    <div class="d-flex align-center gap-3">
+
+                        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                                       FilesChanged="SubirDocumentosTemporales"
+                                       Accept=".pdf,.doc,.docx"
+                                       Multiple>
+
+                            <CustomContent>
+
+                                <MudButton Variant="Variant.Outlined"
+                                           Color="Color.Default"
+                                           OnClick="@context.OpenFilePickerAsync"
+                                           Class="upload-box d-flex flex-column">
+
+                                    <MudIcon Icon="@Icons.Material.Outlined.FileUpload"
+                                             Size="Size.Medium"
+                                             Class="mb-1" />
+
+                                    <span style="font-size: 0.75rem;">
+                                        Subir
+                                    </span>
+
+                                </MudButton>
+
+                            </CustomContent>
+
+                            <SelectedTemplate />
+
+                        </MudFileUpload>
+
+                        <MudText Typo="Typo.caption"
+                                 Class="text-muted">
+
+                            @_documentosNombres
+
+                        </MudText>
+
                     </div>
-                </MudItem>
 
-                <MudItem xs="12" sm="6" Class="mt-2">
-                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold mb-1">Documentos</MudText>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="d-flex align-center gap-3">
-                            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="SubirDocumentosTemporales" Accept=".pdf,.doc,.docx" Multiple>
-                                <CustomContent>
-                                    <MudButton Variant="Variant.Outlined"
-                                               Color="Color.Default"
-                                               OnClick="@context.OpenFilePickerAsync"
-                                               Class="upload-box d-flex flex-column">
-                                        <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Size="Size.Medium" Class="mb-1" />
-                                        <span style="font-size: 0.75rem;">Subir</span>
-                                    </MudButton>
-                                </CustomContent>
-                                <SelectedTemplate />
-                            </MudFileUpload>
 
-                            <MudText Typo="Typo.caption" Class="text-muted">@_documentosNombres</MudText>
-                        </div>
-
-                        @if (_documentosCargados.Any())
+                    @if (_documentosCargados.Any())
+                    {
+                        @foreach (var doc in _documentosCargados)
                         {
-                            @foreach (var doc in _documentosCargados)
-                            {
-                                <MudChip T="string" OnClose="(() => RemoverDocumentoTemporal(doc))" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small" Class="rounded-pill">
-                                    @RecortarNombreArchivo(doc.Name) (Nuevo)
-                                </MudChip>
-                            }
-                        }
+                            <MudChip T="string"
+                                     OnClose="(() => RemoverDocumentoTemporal(doc))"
+                                     Color="Color.Default"
+                                     Variant="Variant.Filled"
+                                     Size="Size.Small"
+                                     Class="rounded-pill">
 
-                        @if (_documentosExistentesBD.Any())
+                                @RecortarNombreArchivo(doc.Name) (Nuevo)
+
+                            </MudChip>
+                        }
+                    }
+
+
+                    @if (_documentosExistentesBD.Any())
+                    {
+                        @foreach (var docUrl in _documentosExistentesBD)
                         {
-                            @foreach (var docUrl in _documentosExistentesBD)
-                            {
-                                <MudChip T="string" OnClose="(() => RemoverDocumentoExistente(docUrl))" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small" Class="rounded-pill">
-                                    @RecortarNombreArchivo(Path.GetFileName(docUrl))
-                                </MudChip>
-                            }
-                        }
-                    </div>
-                </MudItem>
+                            <MudChip T="string"
+                                     OnClose="(() => RemoverDocumentoExistente(docUrl))"
+                                     Color="Color.Info"
+                                     Variant="Variant.Outlined"
+                                     Size="Size.Small"
+                                     Class="rounded-pill">
 
-            </MudGrid>
-        </MudForm>
-    </DialogContent>
+                                @RecortarNombreArchivo(Path.GetFileName(docUrl))
+
+                            </MudChip>
+                        }
+                    }
+
+                </div>
+
+            </MudItem>
+
+        </MudGrid>
+
+    </MudForm>
+</DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancelar" Class="px-5 rounded-lg" Variant="Variant.Outlined">Cancelar</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Guardar" Class="px-5 rounded-lg btn-guardar-custom" Disabled="@(!_formIsValid)">Guardar</MudButton>

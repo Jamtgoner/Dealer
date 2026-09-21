@@ -9,77 +9,108 @@
 <MudContainer MaxWidth="MaxWidth.False" Class="flex-none bg-suave">
     <MudPaper Elevation="3" Class="px-6 py-4 my-3">
 
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
-            <MudStack Spacing="0">
-                <MudText Typo="Typo.h5" Class="fw-bold">Vehiculos</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Primary">Cantidad de vehiculos: @totalVehiculos </MudText>
-            </MudStack>
+    <!-- Encabezado -->
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Justify="Justify.SpaceBetween"
+              Class="mb-3">
+
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.h5" Class="fw-bold">
+                Vehículos
+            </MudText>
+
+            <MudText Typo="Typo.body2" Color="Color.Primary">
+                Cantidad de vehículos: @totalVehiculos
+            </MudText>
         </MudStack>
 
-        <MudDivider Class="my-3" />
+    </MudStack>
 
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+    <MudDivider Class="my-3" />
 
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
-                <!-- Búsqueda por Texto -->
-                <MudTextField @bind-Value="busqueda"
-                              Placeholder="Buscar por marca y modelo"
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search"
-                              Immediate="true"
-                              Variant="Variant.Outlined"
-                              Margin="Margin.Dense"
-                              Style="width:280px; background: white;" />
+    <!-- Filtros y botón -->
+    <MudGrid Spacing="8">
 
-                <!-- Filtro: Combustible -->
-                <MudSelect T="string"
-                           MultiSelection="true"
-                           SelectAll="true"
-                           SelectAllText="Seleccionar todos"
-                           Placeholder="Seleccionar combustible"
-                           @bind-SelectedValues="_combustiblesSeleccionados"
-                           MultiSelectionTextFunc="MensajeCombustibles"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           Clearable="true"
-                           Style="width:250px; background: white;">
-                    @foreach (var c in _listaCombustibles)
-                    {
-                        <MudSelectItem T="string" Value="@c">@c</MudSelectItem>
-                    }
-                </MudSelect>
+        <!-- Búsqueda -->
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="busqueda"
+                          Placeholder="Buscar por marca y modelo"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          FullWidth="true"
+                          Style="background: white;" />
+        </MudItem>
 
-                <!-- Filtro: Transmisión -->
-                <MudSelect T="string"
-                           MultiSelection="true"
-                           SelectAll="true"
-                           SelectAllText="Seleccionar todos"
-                           Placeholder="Seleccionar transmisión"
-                           @bind-SelectedValues="_transmisionesSeleccionadas"
-                           MultiSelectionTextFunc="MensajeTransmisiones"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           Clearable="true"
-                           Style="width:250px; background: white;">
-                    @foreach (var t in _listaTransmisiones)
-                    {
-                        <MudSelectItem T="string" Value="@t">@t</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudStack>
+        <!-- Combustible -->
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect T="string"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       SelectAllText="Seleccionar todos"
+                       Placeholder="Seleccionar combustible"
+                       @bind-SelectedValues="_combustiblesSeleccionados"
+                       MultiSelectionTextFunc="MensajeCombustibles"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       Clearable="true"
+                       FullWidth="true"
+                       Style="background: white;">
 
-            <!-- Botón Nuevo Vehículo -->
+                @foreach (var c in _listaCombustibles)
+                {
+                    <MudSelectItem T="string" Value="@c">
+                        @c
+                    </MudSelectItem>
+                }
+
+            </MudSelect>
+        </MudItem>
+
+        <!-- Transmisión -->
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect T="string"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       SelectAllText="Seleccionar todos"
+                       Placeholder="Seleccionar transmisión"
+                       @bind-SelectedValues="_transmisionesSeleccionadas"
+                       MultiSelectionTextFunc="MensajeTransmisiones"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       Clearable="true"
+                       FullWidth="true"
+                       Style="background: white;">
+
+                @foreach (var t in _listaTransmisiones)
+                {
+                    <MudSelectItem T="string" Value="@t">
+                        @t
+                    </MudSelectItem>
+                }
+
+            </MudSelect>
+        </MudItem>
+
+        <!-- Botón -->
+        <MudItem xs="12" sm="6" md="2" Class="d-flex align-center">
             <MudButton Variant="Variant.Filled"
                        Color="Color.Dark"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="NuevoVehiculo"
                        Size="Size.Medium"
+                       FullWidth="true"
                        Style="text-transform: uppercase; font-weight: bold;">
-                Nuevo Vehiculo
+                Nuevo Vehículo
             </MudButton>
+        </MudItem>
 
-        </MudStack>
-    </MudPaper>
+    </MudGrid>
+
+</MudPaper>
 </MudContainer>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-6 bg-suave flex-grow-1 overflow-auto">
@@ -105,7 +136,7 @@
                     <MudCard Elevation="1" Class="rounded-lg h-100 d-flex flex-column style-card" @onclick="() => IrAlPerfil(vehiculo.Id)">
 
                         <!-- Contenedor de la Imagen / Placeholder -->
-                        <div class="image-container d-flex align-center justify-center text-muted">
+                        <div class="image-container text-muted">
                             @if (_fotosVehiculos.TryGetValue(vehiculo.Id, out var fotoUrl) && !string.IsNullOrEmpty(fotoUrl))
                             {
                                 <img src="@fotoUrl" alt="@vehiculo.Marca @vehiculo.Modelo" class="vehicle-img" />
@@ -273,7 +304,7 @@
         var opciones = new DialogOptions
         {
             CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Large,
+            MaxWidth = MaxWidth.Medium,
             BackdropClick = false,
             FullWidth = true
         };
