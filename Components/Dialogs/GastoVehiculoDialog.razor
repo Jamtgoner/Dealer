@@ -12,8 +12,11 @@
             <MudGrid Spacing="2">
                 <!-- Tipo (Status en la imagen) -->
                 <MudItem xs="12">
+                 <MudText Class="fw-bold text-muted mb-1">
+                    Tipo Gasto
+                </MudText>
                     <MudSelect T="string"
-                               Label="Tipo *"
+                               Placeholder="Tipo"
                                @bind-Value="_gasto.Tipo"
                                Required="true"
                                RequiredError="El tipo es requerido"
@@ -28,8 +31,11 @@
 
                 <!-- Descripción -->
                 <MudItem xs="12">
+                                     <MudText Class="fw-bold text-muted mb-1">
+                    Descripción
+                </MudText>
                     <MudTextField @bind-Value="_gasto.Descripcion"
-                                  Label="Descripción *"
+                                  Placeholder="Descripción"
                                   Required="true"
                                   RequiredError="La descripción es requerida"
                                   Variant="Variant.Outlined"
@@ -38,8 +44,10 @@
 
                 <!-- Monto y Fecha (Fila doble) -->
                 <MudItem xs="12" sm="6">
+                                     <MudText Class="fw-bold text-muted mb-1">
+                    Monto
+                </MudText>
                     <MudNumericField @bind-Value="_gasto.Monto"
-                                     Label="Monto *"
                                      Required="true"
                                      Min="0.01m"
                                      Format="C2"
@@ -47,8 +55,10 @@
                                      Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
+                                     <MudText Class="fw-bold text-muted mb-1">
+                    Fecha
+                </MudText>
                     <MudDatePicker @bind-Date="_fechaNullable"
-                                   Label="Fecha *"
                                    DateFormat="dd/MM/yyyy"
                                    Required="true"
                                    Variant="Variant.Outlined"
@@ -57,8 +67,11 @@
 
                 <!-- Suplidor / Taller -->
                 <MudItem xs="12">
+                                     <MudText Class="fw-bold text-muted mb-1">
+                    Suplidor
+                </MudText>
                     <MudTextField @bind-Value="_gasto.Suplidor"
-                                  Label="Suplidor / Taller"
+                                  Placeholder="Suplidor / Taller"
                                   Variant="Variant.Outlined"
                                   Margin="Margin.Dense" />
                 </MudItem>
