@@ -89,5 +89,6 @@
     <Build Include="dbo\Stored Procedures\usp_SoftDeleteCliente.sql" />
     <Build Include="dbo\Stored Procedures\usp_EditarCliente.sql" />
     <Build Include="dbo\Stored Procedures\usp_AgregarCliente.sql" />
+    <Build Include="dbo\Views\vClientes.sql" />
   </ItemGroup>
 </Project>

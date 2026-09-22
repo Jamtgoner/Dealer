@@ -15,37 +15,49 @@
 <MudSnackbarProvider />
 
 <MudLayout>
+    <MudDrawer @bind-Open="@_open" 
+               Class="bg-sidebar sidebar-drawer" 
+               ClipMode="DrawerClipMode.Never" 
+               Elevation="3"
+               Width="195px"
+               Variant="@DrawerVariant.Mini">
+        
+        <div class="d-flex flex-column justify-space-between sidebar-content nav-custom-white">
+            <!-- Sección Superior: Menú -->
+            <MudNavMenu Class="nav-custom-white">
+                <MudNavLink Href="/dashboard" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+                <MudNavLink Href="/vehiculos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DirectionsCar">Vehículos</MudNavLink>
+                <MudNavLink Href="/ventas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.BarChart">Ventas</MudNavLink>
+                <MudNavLink Href="/clientes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">Clientes</MudNavLink>
+                <MudNavLink Href="/vendedores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.CoPresent">Vendedores</MudNavLink>
+                <MudNavLink Href="/configuracion" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Configuración</MudNavLink>
+            </MudNavMenu>
 
-            <MudAppBar Elevation="1" Dense="true" Class="bg-topbar" Gutters="false">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@ToggleDrawer" />
-                <MudSpacer />
-                <form method="post" action="/api/logout">
+            <!-- Sección Inferior: Botones centrados -->
+            <div class="sidebar-footer">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" 
+                               OnClick="@ToggleDrawer" 
+                               Class="sidebar-footer-btn" />
+
+                <form method="post" action="/api/logout" class="sidebar-form">
                     <MudIconButton Icon="@Icons.Material.Filled.Logout"
-                                   Color="Color.Inherit"
-                                   ButtonType="ButtonType.Submit" />
+                                   ButtonType="ButtonType.Submit" 
+                                   Class="sidebar-footer-btn" />
                 </form>
-            </MudAppBar>
-            
-            <MudDrawer @bind-Open="@_open" Class="bg-sidebar" ClipMode="DrawerClipMode.Always" Elevation="3" Variant="@DrawerVariant.Mini">
-                <MudNavMenu Class="nav-custom-white">
-                    <MudNavLink Href="/dashboard" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-                    <MudNavLink Href="/vehiculos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DirectionsCar">Vehiculos</MudNavLink>
-                    <MudNavLink Href="/ventas" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.BarChart">Ventas</MudNavLink>
-                    <MudNavLink Href="/clientes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">Clientes</MudNavLink>
-                    <MudNavLink Href="/vendedores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.CoPresent">Vendedores</MudNavLink>
-                    <MudNavLink Href="/configuracion" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Configuracion</MudNavLink>
-                </MudNavMenu>
-            </MudDrawer>
+            </div>
+        </div>
+    </MudDrawer>
 
-            <MudMainContent Class="mud-height-full">
-                <div class="d-flex flex-column mud-height-full">
-                @Body
-                </div>
-            </MudMainContent>
+    <MudMainContent Class="mud-height-full p-0">
+        <div class="d-flex flex-column mud-height-full">
+            @Body
+        </div>
+    </MudMainContent>
 </MudLayout>
 
 @code {
     bool _open = true;
     void ToggleDrawer() => _open = !_open;
+
 }
 

@@ -1,4 +1,5 @@
 ﻿
+
 CREATE view [dbo].[vClientes] as
 SELECT [Id]
       ,[PrimerNombre]
@@ -11,5 +12,5 @@ SELECT [Id]
       ,[Direccion]
       ,[Notas]
       ,[IsDeleted]
-  FROM [Dealer].[dbo].[Clientes]
+  FROM [Clientes]
   where [IsDeleted] = 0

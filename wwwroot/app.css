@@ -64,28 +64,6 @@ h1:focus {
     background-color: #e8ecf1 !important;
 }
 
-/* Clase para el contenedor del menú */
-.nav-custom-white .mud-nav-link-icon {
-    font-size: 1.75rem !important;
-    color: rgba(255, 255, 255, 0.70) !important; /* Blanco con un poco de transparencia para el estado normal */
-    transition: color 0.3s ease;
-}
-
-/* Cuando el mouse pasa por encima (Hover) */
-.nav-custom-white .mud-nav-link:hover .mud-nav-link-icon {
-    color: #ffffff !important;
-}
-
-/* Cuando el link está activo (la página actual) */
-.nav-custom-white .mud-nav-link.active .mud-nav-link-icon {
-    color: #ffffff !important;
-}
-
-/* Opcional: Color del texto también en blanco */
-.nav-custom-white .mud-nav-link-text {
-    color: #ffffff !important;
-}
-
 #blazor-error-ui {
     background-color: #b91c1c !important; /* Rojo oscuro */
     color: white !important;
@@ -206,4 +184,115 @@ h1:focus {
 
 .custom-dialog-height {
     min-height: 520px;
+}
+
+/* Ajustes generales del Drawer */
+.sidebar-drawer {
+    height: 100vh !important;
+    top: 0 !important;
+    overflow-x: hidden !important; /* Elimina cualquier scroll horizontal */
+}
+
+    .sidebar-drawer .mud-drawer-content {
+        overflow-x: hidden !important;
+    }
+
+.sidebar-content {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Pie del sidebar perfectamente centrado */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    gap: 8px;
+}
+
+.sidebar-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+
+/* Botones alineados con los iconos del MudNavMenu */
+.sidebar-btn {
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+    .sidebar-btn:hover {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+/* Estilos del Drawer */
+.sidebar-drawer {
+    height: 100vh !important;
+    top: 0 !important;
+    overflow-x: hidden !important;
+}
+
+    .sidebar-drawer .mud-drawer-content {
+        overflow-x: hidden !important;
+    }
+
+.sidebar-content {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Estilos del contenedor del menú */
+.nav-custom-white .mud-nav-link-icon {
+    font-size: 1.75rem !important;
+    color: rgba(255, 255, 255, 0.70) !important;
+    transition: color 0.3s ease;
+}
+
+.nav-custom-white .mud-nav-link:hover .mud-nav-link-icon {
+    color: #ffffff !important;
+}
+
+.nav-custom-white .mud-nav-link.active .mud-nav-link-icon {
+    color: #ffffff !important;
+}
+
+.nav-custom-white .mud-nav-link-text {
+    color: #ffffff !important;
+}
+
+/* Pie del sidebar */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    gap: 8px;
+}
+
+.sidebar-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+
+/* Homologación de estilos para los MudIconButton del pie */
+.sidebar-footer-btn .mud-icon-root {
+    font-size: 1.75rem !important;
+    color: rgba(255, 255, 255, 0.70) !important;
+    transition: color 0.3s ease;
+}
+
+.sidebar-footer-btn:hover .mud-icon-root {
+    color: #ffffff !important;
 }
