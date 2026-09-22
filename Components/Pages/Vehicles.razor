@@ -242,21 +242,39 @@
         return $"{selectedValues.Count} transmisión{(selectedValues.Count > 1 ? "es" : "")}";
     }
 
-    // Lógica de filtrado dinámico
-    private IEnumerable<Vehiculos> VehiculosFiltrados => _fullVehiculos
-        .Where(v =>
-            (string.IsNullOrWhiteSpace(busqueda) ||
-             (v.Marca?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-             (v.Modelo?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-             (v.Anio.ToString().Contains(busqueda)) ||
-             (v.Color?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-             (v.Vin?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
-             (v.Placa?.Contains(busqueda, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-            (!_combustiblesSeleccionados.Any() ||
-             _combustiblesSeleccionados.Contains(v.Combustible, StringComparer.OrdinalIgnoreCase)) &&
-            (!_transmisionesSeleccionadas.Any() ||
-             _transmisionesSeleccionadas.Contains(v.Transmision, StringComparer.OrdinalIgnoreCase))
-        );
+    private IEnumerable<Vehiculos> VehiculosFiltrados
+    {
+        get
+        {
+            // Se evalúan las condiciones globales una sola vez fuera del bucle
+            bool tieneFiltroCombustible = _combustiblesSeleccionados.Count > 0;
+            bool tieneFiltroTransmision = _transmisionesSeleccionadas.Count > 0;
+            bool tieneBusqueda = !string.IsNullOrWhiteSpace(busqueda);
+
+            string textoBusqueda = tieneBusqueda ? busqueda.Trim() : string.Empty;
+
+            return _fullVehiculos.Where(v =>
+            {
+                // 1. Descarte rápido (operaciones baratas primero)
+                if (tieneFiltroCombustible && !_combustiblesSeleccionados.Contains(v.Combustible, StringComparer.OrdinalIgnoreCase))
+                    return false;
+
+                if (tieneFiltroTransmision && !_transmisionesSeleccionadas.Contains(v.Transmision, StringComparer.OrdinalIgnoreCase))
+                    return false;
+
+                if (!tieneBusqueda)
+                    return true;
+
+                // 2. Búsqueda de texto limpia y natural con Contains
+                return (v.Marca?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                       (v.Modelo?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                       (v.Color?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                       (v.Placa?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                       (v.Vin?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                       v.Anio.ToString() == textoBusqueda;
+            });
+        }
+    }
 
     private async Task CargarDatos()
     {
