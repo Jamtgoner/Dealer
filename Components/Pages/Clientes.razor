@@ -1,0 +1,172 @@
+﻿@page "/clientes"
+@inject RepGeneral dataconex
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.False" Class="flex-none bg-suave">
+    <MudPaper Elevation="3" Class="px-6 py-4 my-3">
+
+    <!-- Encabezado -->
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Justify="Justify.SpaceBetween"
+              Class="mb-3">
+
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.h5" Class="fw-bold">
+                Clientes
+            </MudText>
+
+            <MudText Typo="Typo.body2" Color="Color.Primary">
+                Cantidad de clientes: 100
+            </MudText>
+        </MudStack>
+
+    </MudStack>
+
+    <MudDivider Class="my-3" />
+
+    <!-- Filtros y botón -->
+    <MudGrid Spacing="8">
+
+        <!-- Búsqueda -->
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="busqueda"
+                          Placeholder="Buscar por nombre o documento de identidad"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          FullWidth="true"
+                          Style="background: white;" />
+        </MudItem>
+
+        <!-- Botón -->
+        <MudItem xs="12" sm="6" md="2" Class="d-flex align-center">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Dark"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Size="Size.Medium"
+                       FullWidth="true"
+                       Style="text-transform: uppercase; font-weight: bold;">
+                Agregar Cliente
+            </MudButton>
+        </MudItem>
+
+    </MudGrid>
+
+</MudPaper>
+</MudContainer>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-6 bg-suave flex-grow-1 overflow-auto">
+    <MudPaper Elevation="1" Class="rounded-lg tabla-pos">
+
+        <MudTable T="Cliente"
+                  Items="ClientesFiltrados"
+                  Dense="true"
+                  Hover="true"
+                  Elevation="0"
+                  RowsPerPage="10" 
+                  RowStyle="cursor: pointer;">
+
+            <HeaderContent>
+                <MudTh>NOMBRE</MudTh>
+                <MudTh>TELÉFONO</MudTh>
+                <MudTh>DIRECCION</MudTh>
+                <MudTh>CORREO</MudTh>
+                <MudTh>DNI</MudTh>
+                <MudTh>ACCIONES</MudTh>
+            </HeaderContent>
+
+            <RowTemplate Context="cliente">
+                <MudTd>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudAvatar Size="Size.Small" Color="Color.Primary">
+                            @cliente.PrimerNombre?.Substring(0, 1)
+                        </MudAvatar>
+                        <MudText Class="fw-bold">@($"{cliente.PrimerNombre} {cliente.SegundoNombre} {cliente.PrimerApellido} {cliente.SegundoApellido}") </MudText>
+                    </MudStack>
+                </MudTd>
+
+                <MudTd>@cliente.Telefono</MudTd>
+                <MudTd>@(cliente.Direccion ?? "—")</MudTd>
+                <MudTd>@(cliente.Correo ?? "—")</MudTd>
+                <MudTd>@(cliente.DocumentoIdentidad ?? "—")</MudTd>
+
+                <!-- ACCIONES -->
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="() => Editar(cliente.Id)" />
+
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   OnClick="() => Eliminar(cliente.Id)" />
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager InfoFormat="{first_item}-{last_item} de {all_items}"
+                               RowsPerPageString="Filas por página:" />
+            </PagerContent>
+        </MudTable>
+
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private List<Cliente> Cliente = new();
+    private string busqueda = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var clientes = await dataconex.ObtenerClientes();
+        Cliente = clientes.ToList();
+    }
+
+    private async Task RecargarClientes()
+    {
+        var clientes = await dataconex.ObtenerClientes();
+        Cliente = clientes.ToList();
+    }
+
+    private IEnumerable<Cliente> ClientesFiltrados =>
+      string.IsNullOrWhiteSpace(busqueda) ? Cliente: Cliente.Where(c =>
+              c.PrimerNombre != null && c.PrimerNombre.Contains(busqueda, StringComparison.OrdinalIgnoreCase));
+
+    private async Task Editar(int id)
+    {
+
+    }
+
+    private async Task Eliminar(int id)
+    {
+        var cliente = Cliente.FirstOrDefault(x => x.Id == id);
+        var parameters = new DialogParameters
+        {
+            { "CuerpoMensaje", "Cliente a eliminar: " },
+            { "InformacionResaltada", cliente?.PrimerNombre},
+            { "OnConfirm", async () => await dataconex.SoftDeleteCliente(id) }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true,
+            BackdropClick = false
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmacionEliminacionDialog>(
+            string.Empty,
+            parameters,
+            options
+        );
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await RecargarClientes();
+    }
+}

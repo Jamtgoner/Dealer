@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dealer.Components.Pages;
 using Dealer.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -15,6 +16,12 @@ namespace Dealer.Repositories
             var usuario = await conexion.QueryFirstOrDefaultAsync<Usuarios>("usp_Login", new { Usuario = nombre });
 
             return usuario != null && BCrypt.Net.BCrypt.Verify(clave, usuario.Clave) ? usuario : null;
+        }
+
+        public async Task<IEnumerable<Cliente>> ObtenerClientes()
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            return await conexion.QueryAsync<Cliente>("SELECT * from vClientes");
         }
 
         public async Task<IEnumerable<Vehiculos>> ObtenerVehiculos()
@@ -299,6 +306,87 @@ namespace Dealer.Repositories
             catch (Exception ex)
             {
                 return (false, $"No se pudo eliminar el gasto: {ex.Message}");
+            }
+        }
+
+        public async Task<(bool Exito, string Mensaje, int IdGenerado)> AgregarCliente(Cliente cliente)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            try
+            {
+                var id = await conexion.QuerySingleAsync<int>(
+                    "usp_AgregarCliente",
+                    new
+                    {
+                        cliente.PrimerNombre,
+                        cliente.SegundoNombre,
+                        cliente.PrimerApellido,
+                        cliente.SegundoApellido,
+                        cliente.Telefono,
+                        cliente.Correo,
+                        cliente.DocumentoIdentidad,
+                        cliente.Direccion,
+                        cliente.Notas
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+                return (true, "Cliente agregado correctamente", id);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error al agregar cliente: {ex.Message}", 0);
+            }
+        }
+
+        public async Task<(bool Exito, string Mensaje)> EditarCliente(Cliente cliente)
+        {
+            using var conexion = new SqlConnection(_connectionString);
+            try
+            {
+                await conexion.ExecuteAsync(
+                    "usp_EditarCliente",
+                    new
+                    {
+                        cliente.Id,
+                        cliente.PrimerNombre,
+                        cliente.SegundoNombre,
+                        cliente.PrimerApellido,
+                        cliente.SegundoApellido,
+                        cliente.Telefono,
+                        cliente.Correo,
+                        cliente.DocumentoIdentidad,
+                        cliente.Direccion,
+                        cliente.Notas
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+                return (true, "Cliente actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error al actualizar cliente: {ex.Message}");
+            }
+        }
+
+        public async Task<(bool Exito, string Mensaje)> SoftDeleteCliente(int id)
+        {
+            try
+            {
+                using var conexion = new SqlConnection(_connectionString);
+                var parametros = new DynamicParameters();
+                parametros.Add("@Id", id);
+
+                await conexion.ExecuteAsync(
+                    "usp_SoftDeleteCliente",
+                    parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return (true, "Cliente eliminado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"No se pudo eliminar el cliente: {ex.Message}");
             }
         }
     }

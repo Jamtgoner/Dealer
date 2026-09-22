@@ -85,5 +85,9 @@
     <Build Include="dbo\Views\vDesperfectosVehiculo.sql" />
     <Build Include="dbo\Tables\Parametros.sql" />
     <Build Include="dbo\Stored Procedures\usp_EliminarGasto.sql" />
+    <Build Include="dbo\Views\vClientes.sql" />
+    <Build Include="dbo\Stored Procedures\usp_SoftDeleteCliente.sql" />
+    <Build Include="dbo\Stored Procedures\usp_EditarCliente.sql" />
+    <Build Include="dbo\Stored Procedures\usp_AgregarCliente.sql" />
   </ItemGroup>
 </Project>
